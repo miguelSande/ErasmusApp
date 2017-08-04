@@ -36,6 +36,10 @@ public class RequestService {
 		return request;
 	}
 	
+	public List<Request> findByStudent(Student student) {
+		return requestRepo.findByStudent(student);
+	}
+	
 	public void preprocess() {
 		studentService.calculateVal();
 		List<Student> allReq = requestRepo.pendingRequests(State.PENDING);
@@ -50,6 +54,8 @@ public class RequestService {
 		if (language == null)
 			return true;
 		if (student.getLanguage() != null) {
+			if (student.getLanguage().toUpperCase().contains("PROBA"))
+				return true;
 			String[] lans = student.getLanguage().split(",");
 			List<Language> languages = new ArrayList<>();
 			for (String s: lans) {

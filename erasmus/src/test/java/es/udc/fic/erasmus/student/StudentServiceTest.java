@@ -82,7 +82,7 @@ public class StudentServiceTest extends WebAppConfigurationAware {
 		Double expected1 = 6.57 * 0.95;
 		Student student2 = new Student("student2", 7.28, "curso", null, true);
 		student2 = studentService.create(student2);
-		Double expected2 = 7.28 * 0.95 + 0.25;
+		Double expected2 = 7.166;
 		Student student3 = new Student("student3", 5.25, "curso", "EN - B2,PT - A2", false);
 		student3 = studentService.create(student3);
 		Double expected3 = 5.25 * 0.95 + 0.5;

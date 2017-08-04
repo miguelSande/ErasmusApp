@@ -13,13 +13,16 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.stereotype.Service;
 
 import es.udc.fic.erasmus.Language;
 import es.udc.fic.erasmus.university.University;
 
+@Service
+@Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class ReaderUni {
-	
-	private String path;
 	
 	private int nameC = 8;
 	private int languageC = 9;
@@ -28,12 +31,8 @@ public class ReaderUni {
 	private int numberC = 3;
 	private int durationC = 4;
 	private int postsC = 7;
-
-	public ReaderUni(String path) {
-		this.path = path;
-	}
 	
-	private Workbook getWorkbook(FileInputStream input) throws IOException {
+	private Workbook getWorkbook(FileInputStream input, String path) throws IOException {
 		Workbook wb;
 		if (path.endsWith("xlsx")) {
 			wb = new XSSFWorkbook(input);
@@ -126,16 +125,18 @@ public class ReaderUni {
 		return new University(name, language, year, (duration/number), country, posts);
 	}
 	
-	public List<University> readUniExcel() throws IOException {
+	public List<University> readUniExcel(String path) throws IOException {
 		List<University> result = new ArrayList<>();
 		FileInputStream inputStream = new FileInputStream(new File(path));
-		Workbook wb = getWorkbook(inputStream);
+		Workbook wb = getWorkbook(inputStream, path);
 		Sheet sheet = wb.getSheetAt(0);
 		Iterator<Row> iterator = sheet.iterator();
 		
-		Row header_row = iterator.next();
-		Iterator<Cell> headerIt = header_row.cellIterator();
-		setColumns(headerIt);
+		if (iterator.hasNext()) {
+			Row header_row = iterator.next();
+			Iterator<Cell> headerIt = header_row.cellIterator();
+			setColumns(headerIt);
+		}
 		
 		while (iterator.hasNext()) {
 			Row row = iterator.next();
