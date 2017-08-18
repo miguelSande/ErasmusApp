@@ -42,6 +42,8 @@ public class Request implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private State state;
 
+	public Request() {}
+	
 	public Request(Student student, University university, Long priority, String startDate) {
 		this.student = student;
 		this.university = university;

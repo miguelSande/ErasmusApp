@@ -36,6 +36,14 @@ public class RequestService {
 		return request;
 	}
 	
+	public List<Request> returnRequests(List<Request> rqs) {
+		List<Request> result = new ArrayList<>();
+		for (Request r: rqs) {
+			result.add(requestRepo.findOne(r.getRe_id()));
+		}
+		return result;
+	}
+	
 	public List<Request> findByStudent(Student student) {
 		return requestRepo.findByStudent(student);
 	}
@@ -81,6 +89,7 @@ public class RequestService {
 		boolean pending = true;
 		request.sort((r1,r2) -> r1.getPriority().compareTo(r2.getPriority()));
 		for (Request r: request) {
+			r.setStudent(student);
 			//hay otro aceptado
 			if (pending) {
 				//supera el requisito de idioma pedido

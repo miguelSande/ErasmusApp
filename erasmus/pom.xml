@@ -7,7 +7,6 @@
     <groupId>es.udc.fic</groupId>
     <artifactId>erasmus</artifactId>
     <packaging>war</packaging>
-    <version>0.0.1-SNAPSHOT</version>
     <name>Spring MVC Application</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -254,4 +253,5 @@
             </plugin>
         </plugins>
     </build>
+    <version>1.0</version>
 </project>

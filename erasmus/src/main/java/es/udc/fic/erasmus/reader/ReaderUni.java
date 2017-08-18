@@ -44,6 +44,7 @@ public class ReaderUni {
 		return wb;
 	}
 	
+	@SuppressWarnings("deprecation")
 	private Object getCellValue(Cell cell) {
 		switch(cell.getCellType()) {
 		case Cell.CELL_TYPE_STRING:
@@ -125,10 +126,10 @@ public class ReaderUni {
 		return new University(name, language, year, (duration/number), country, posts);
 	}
 	
-	public List<University> readUniExcel(String path) throws IOException {
+	public List<University> readUniExcel(File file,String name) throws IOException {
 		List<University> result = new ArrayList<>();
-		FileInputStream inputStream = new FileInputStream(new File(path));
-		Workbook wb = getWorkbook(inputStream, path);
+		FileInputStream inputStream = new FileInputStream(file);
+		Workbook wb = getWorkbook(inputStream, name);
 		Sheet sheet = wb.getSheetAt(0);
 		Iterator<Row> iterator = sheet.iterator();
 		

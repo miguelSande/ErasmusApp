@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Resultados</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link href="../../../resources/css/bootstrap.min.css" rel="stylesheet" media="screen" th:href="@{/resources/css/bootstrap.min.css}"/>
+    <link href="../../../resources/css/core.css" rel="stylesheet" media="screen" th:href="@{/resources/css/core.css}" />
+    <script src="../../../resources/js/jquery.min.js" th:src="@{/resources/js/jquery.min.js}"></script>
+    <script src="../../../resources/js/bootstrap.min.js" th:src="@{/resources/js/bootstrap.min.js}"></script>
+</head>
+<body>
+<div th:replace="fragments/layout :: header"></div>
+<div align="right">
+	<form action="#" th:action="@{/download}">
+		<input type="hidden" name="name" th:value="${file}">
+		<button class="btn btn-primary btn-lg" type="submit">Descargar</button>
+	</form>
+</div>
+<div class="table-responsive">
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Nombre</th>
+				<th>Valoración</th>
+				<th>Destino</th>
+				<th>Estado</th>
+				<th>Motivo</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="rq : ${requests}">
+				<td><label th:text="${rq.student.name}">Nombre</label></td>
+				<td><label th:text="${rq.student.val}">Valoracion</label></td>
+				<td><label th:text="${rq.university.name}">Destino</label></td>
+				<td><label th:text="${rq.state.value}">Estado</label></td>
+				<td><label th:text="${rq.motive}">Motivo</label></td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+</body>
+</html>

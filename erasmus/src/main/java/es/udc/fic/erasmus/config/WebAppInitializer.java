@@ -7,6 +7,9 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 import javax.servlet.*;
 
 public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+	
+	private static final long MAX_FILE_SIZE = 5242880;
+	private static final long MAX_REQUESTED_SIZE = 20971520;
 
     @Override
     protected String[] getServletMappings() {
@@ -38,5 +41,7 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
     protected void customizeRegistration(ServletRegistration.Dynamic registration) {
         registration.setInitParameter("defaultHtmlEscape", "true");
         registration.setInitParameter("spring.profiles.active", "default");
+        registration.setMultipartConfig(new MultipartConfigElement(
+        		System.getProperty("java.io.tempdir"), MAX_FILE_SIZE, MAX_REQUESTED_SIZE, 0));
     }
 }

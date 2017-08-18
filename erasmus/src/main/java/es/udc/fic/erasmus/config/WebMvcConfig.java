@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.ViewResolver;
@@ -74,6 +75,11 @@ class WebMvcConfig extends WebMvcConfigurationSupport {
         thymeleafViewResolver.setTemplateEngine(templateEngine());
         thymeleafViewResolver.setCharacterEncoding(CHARACTER_ENCODING);
         return thymeleafViewResolver;
+    }
+    
+    @Bean(name = "multipartResolver")
+    public StandardServletMultipartResolver resolver() {
+    	return new StandardServletMultipartResolver();
     }
 
     @Override

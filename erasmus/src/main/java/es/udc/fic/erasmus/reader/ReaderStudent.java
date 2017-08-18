@@ -2,6 +2,7 @@ package es.udc.fic.erasmus.reader;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -9,6 +10,7 @@ import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -18,7 +20,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 
+import es.udc.fic.erasmus.State;
 import es.udc.fic.erasmus.request.Request;
+import es.udc.fic.erasmus.request.RequestService;
 import es.udc.fic.erasmus.student.Student;
 import es.udc.fic.erasmus.student.StudentService;
 import es.udc.fic.erasmus.university.UniversityRepository;
@@ -29,6 +33,9 @@ public class ReaderStudent {
 	
 	@Autowired
 	private UniversityRepository uniRepo;
+	
+	@Autowired
+	private RequestService rqService;
 	
 	@Autowired
 	private StudentService studentService;
@@ -200,11 +207,11 @@ public class ReaderStudent {
 			return new Request(studentService.find(name), uniRepo.findByName(university), priority, start);
 		}
 		
-		public List<Student> readStudentExcel(String path) throws IOException {
+		public List<Student> readStudentExcel(File file, String name) throws IOException {
 			List<Student> result = new ArrayList<>();
 			int header = 0, aux = 0;
-			FileInputStream inputStream = new FileInputStream(new File(path));
-			Workbook wb = getWorkbook(inputStream, path);
+			FileInputStream inputStream = new FileInputStream(file);
+			Workbook wb = getWorkbook(inputStream, name);
 			Sheet sheet = wb.getSheetAt(0);
 			Iterator<Row> iterator = sheet.iterator();
 						
@@ -236,11 +243,11 @@ public class ReaderStudent {
 			return result;
 		}
 		
-		public List<Request> readRequestExcel(String path) throws IOException {
+		public List<Request> readRequestExcel(File file, String name) throws IOException {
 			List<Request> result = new ArrayList<>();
 			int header = 0, aux = 0;
-			FileInputStream inputStream = new FileInputStream(new File(path));
-			Workbook wb = getWorkbook(inputStream, path);
+			FileInputStream inputStream = new FileInputStream(file);
+			Workbook wb = getWorkbook(inputStream, name);
 			Sheet sheet = wb.getSheetAt(0);
 			Iterator<Row> iterator = sheet.iterator();
 						
@@ -271,5 +278,83 @@ public class ReaderStudent {
 			inputStream.close();
 			return result;
 		}
+		
+	public void writeChanges(File file, String name) throws IOException {
+		int header = 0, aux = 0;
+		FileInputStream inputStream = new FileInputStream(file);
+		Workbook wb = getWorkbook(inputStream, name);
+		Sheet sheet = wb.getSheetAt(0);
+		Iterator<Row> iterator = sheet.iterator();
+		
+		for (int i = 0; i < sheet.getPhysicalNumberOfRows(); i++) {
+			if (sheet.getRow(i).getPhysicalNumberOfCells() > aux) {
+				aux = sheet.getRow(i).getPhysicalNumberOfCells();
+				header = i;
+			}
+		}			
+		for (int i = 0; i < header || !iterator.hasNext(); i++) {
+			iterator.next();
+		}
+		if (iterator.hasNext()) {
+			Row header_row = iterator.next();
+			Iterator<Cell> headerIt = header_row.cellIterator();
+			setColumns(headerIt);
+		}    
+	    
+	    for (int i = header + 1; i < sheet.getPhysicalNumberOfRows(); i++) {
+	    	Row row = sheet.getRow(i);
+	    	Cell cell = row.getCell(nameC);
+		    if (cell == null)
+		    	break;
+		    String cellName = (String) getCellValue(cell);
+		    Student student = studentService.find(cellName);
+		    Cell valCell = row.getCell(valC);
+		    valCell.setCellType(CellType.NUMERIC);
+		    valCell.setCellValue(student.getVal());
+		    Double aux2 = (Double) getCellValue(row.getCell(priorityC));
+		    long prio = aux2.longValue();
+		    List<Request> requests = rqService.findByStudent(student);
+		    Request rq = null;
+		    for (Request r: requests) {
+		    	if (r.getPriority() == prio)
+		    		rq = r;
+		    }
+		    Cell stateCell = row.getCell(stateC);
+		    stateCell.setCellType(CellType.STRING);
+		    stateCell.setCellValue(rq.getState().getValue());
+		    if (rq.getState() == State.REJECTED) {
+		    	Cell motCell = row.getCell(motiveC);
+		    	if (motCell == null)
+		    		motCell = row.createCell(motiveC);
+			    motCell.setCellType(CellType.STRING);
+			    motCell.setCellValue(rq.getMotive());
+		    }
+	    }
+	    
+//		for (int i = header + 1; sheet.getRow(i).getCell(0).getCellTypeEnum() == CellType.BLANK  ; i++) {
+//			Row row = sheet.getRow(i);
+//			Student student = studentService.find((String) getCellValue(row.getCell(nameC)));
+//			List<Request> requests = rqService.findByStudent(student);
+//			int o = i;
+//			for (Request r: requests) {
+//				Cell cellVal = row.getCell(valC);
+//				cellVal.setCellValue(student.getVal());
+//				Cell cellState = row.getCell(stateC);
+//				cellState.setCellValue(r.getState().getValue());
+//				if (r.getState() == State.REJECTED) {
+//					Cell cellMot = row.getCell(motiveC);
+//					cellMot.setCellValue(r.getMotive());
+//				}
+//				row = sheet.getRow(o++);
+//			}
+//			i = i + requests.size()-1;
+//		}
+		
+		inputStream.close();
+		FileOutputStream out = new FileOutputStream(file);
+		wb.write(out);
+		wb.close();
+		out.close();
+	}
 
 }

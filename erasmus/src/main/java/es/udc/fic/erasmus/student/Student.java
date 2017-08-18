@@ -28,6 +28,8 @@ public class Student implements Serializable {
 	
 	private Boolean lang_test;
 
+	public Student() {}
+	
 	public Student(String name, Double note, String others, String language, Boolean lang_test) {
 		this.name = name;
 		this.note = note;

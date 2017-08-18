@@ -29,6 +29,8 @@ public class University implements Serializable {
 	private String country;
 	
 	private Long posts;
+	
+	public University() {}
 
 	public University(String name, Language language, String year, Long duration, String country, Long posts) {
 		this.name = name;

@@ -31,6 +31,15 @@ public class StudentServiceTest extends WebAppConfigurationAware {
 	}
 	
 	@Test
+	public void testFind() {
+		Student student = new Student("Pepe", 6.57, null, "EN - B2", false);
+		student = studentService.create(student);
+		Student expected = studentService.find("Pepe");
+		assertEquals(expected, student);
+		delete(student);
+	}
+	
+	@Test
 	public void testCalcSimpleVal() {
 		Student student = new Student("nombre apellido apellido", 6.57, null, "EN - B2", false);
 		student = studentService.create(student);
