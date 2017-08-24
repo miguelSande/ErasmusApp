@@ -67,11 +67,16 @@ public class ReaderTest extends WebAppConfigurationAware {
 	
 	@Test
 	public void testReaderStudent() throws IOException {
+		String path1 = this.getClass().getResource("/destinos.XLS").getFile();
+		List<University> universities = readerU.readUniExcel(new File(path1), path1);
+		for (University u: universities) {
+			uniRepo.save(u);
+		}
 		String path = this.getClass().getResource("/pedidos.xlsx").getFile();
-		List<Request> expected = readerS.readRequestExcel(new File(path), path);
-		assertEquals(37, expected.size());
 		List<Student> expec = readerS.readStudentExcel(new File(path), path);
 		assertEquals(15, expec.size());
+		List<Request> expected = readerS.readRequestExcel(new File(path), path);
+		assertEquals(37, expected.size());
 	}
 	
 	@Test  //problemas con el excel universidad inexistente
@@ -100,7 +105,7 @@ public class ReaderTest extends WebAppConfigurationAware {
 		Request request = rqs.get(0);
 		Request otherRq = rqService.findByStudent(stRepo.findByName("Miguel Sánchez, Elisa")).get(0);
 		Request request2 = rqService.findByStudent(stRepo.findByName("Lorenzo Lago, Sofía")).get(0);
-		assertEquals("6.7244", sample.getVal().toString());
+		assertEquals("6.9744", sample.getVal().toString());
 		assertEquals(State.REJECTED, request.getState());
 		assertEquals("Prazas agotadas", request.getMotive());
 		assertEquals(State.REJECTED, otherRq.getState());

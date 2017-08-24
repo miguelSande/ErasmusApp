@@ -3,7 +3,6 @@ package es.udc.fic.erasmus.home;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -90,9 +89,6 @@ public class ProcessController {
 				requestService.create(r);
 			}
 			requestService.preprocess();
-//			if (!processForm.writeResults())
-//			readerS.writeChanges(convert(getPathRequest()), getPathRequest().getOriginalFilename());
-//				MessageHelper.addWarningAttribute(ra, "process.warning");
 			File file = new File(tmpDir + File.separator + processForm.getPathRequest().getOriginalFilename());
 			readerS.writeChanges(file, processForm.getPathRequest().getOriginalFilename());			
 			model.addAttribute("requests", requestService.returnRequests(requests));
@@ -107,7 +103,6 @@ public class ProcessController {
 	
 	@RequestMapping(value="download", params = {"name"})
 	void download(HttpServletResponse response, @RequestParam(value="name") String name) throws IOException {
-		System.out.println(name);
 		File file = new File(tmpDir+File.separator+name);
 		response.setContentType("application/octet-stream");
 		response.setHeader("Content-Disposition", String.format("inline; filename=\"" + file.getName() +"\""));

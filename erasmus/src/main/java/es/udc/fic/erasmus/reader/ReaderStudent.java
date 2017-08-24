@@ -21,6 +21,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 
 import es.udc.fic.erasmus.State;
+import es.udc.fic.erasmus.error.UniversityNotFoundException;
 import es.udc.fic.erasmus.request.Request;
 import es.udc.fic.erasmus.request.RequestService;
 import es.udc.fic.erasmus.student.Student;
@@ -41,6 +42,7 @@ public class ReaderStudent {
 	private StudentService studentService;
 	
 	private int nameC = 3;
+	private int dniC = 4;
 	private int languageC = 12;
 	private int othersC = 20;
 	private int noteC = 19;
@@ -101,6 +103,9 @@ public class ReaderStudent {
 				case "Nombre":
 					nameC = cell.getColumnIndex();
 					break;
+				case "DNI":
+					dniC = cell.getColumnIndex();
+					break;
 				case "Institución":
 					uniC = cell.getColumnIndex();
 					break;
@@ -143,7 +148,7 @@ public class ReaderStudent {
 		}
 		
 		private Student processStudentRow(Iterator<Cell> cellIt) {
-			String name = null, others = null, language = null;
+			String dni = null, name = null, others = null, language = null;
 			Long priority = null;
 			Double aux, note = null, lan1 = null,lan2=null,lan3=null,lan4=null,lan5=null;
 			while (cellIt.hasNext()) {
@@ -151,6 +156,8 @@ public class ReaderStudent {
 				int column = cell.getColumnIndex();
 				if (column == nameC) 
 					name = (String) getCellValue(cell);
+				if (column == dniC)
+					dni = (String) getCellValue(cell);
 				if (column == othersC)
 					others = (String) getCellValue(cell);
 				if (column == languageC)
@@ -176,20 +183,20 @@ public class ReaderStudent {
 				}
 			}
 			if (priority != null && priority == 1)
-				return new Student(name, note, others, language, checkLanTest(lan1,lan2,lan3,lan4,lan5));
+				return new Student(dni, name, note, others, language, checkLanTest(lan1,lan2,lan3,lan4,lan5));
 			else
 				return null;
 		}
 		
 		private Request processRequestRow(Iterator<Cell> cellIt) {
-			String name = null, university = null, start = null;
+			String dni = null, university = null, start = null;
 			Long priority = null;
 			Double aux;
 			while (cellIt.hasNext()) {
 				Cell cell = cellIt.next();
 				int column = cell.getColumnIndex();
-				if (column == nameC) 
-					name = (String) getCellValue(cell);
+				if (column == dniC) 
+					dni = (String) getCellValue(cell);
 				if (column == uniC) 
 					university = (String) getCellValue(cell);
 				if (column == startC)
@@ -202,9 +209,11 @@ public class ReaderStudent {
 					priority = aux.longValue();
 				}
 			}
-			if (name == null) //nueva condicion de parada ???
+			if (dni == null) //nueva condicion de parada ???
 				return null;
-			return new Request(studentService.find(name), uniRepo.findByName(university), priority, start);
+			if (uniRepo.findByName(university) == null)
+				throw new UniversityNotFoundException(university);
+			return new Request(studentService.find(dni), uniRepo.findByName(university), priority, start);
 		}
 		
 		public List<Student> readStudentExcel(File file, String name) throws IOException {
@@ -303,12 +312,14 @@ public class ReaderStudent {
 	    
 	    for (int i = header + 1; i < sheet.getPhysicalNumberOfRows(); i++) {
 	    	Row row = sheet.getRow(i);
-	    	Cell cell = row.getCell(nameC);
+	    	Cell cell = row.getCell(dniC);
 		    if (cell == null)
 		    	break;
 		    String cellName = (String) getCellValue(cell);
 		    Student student = studentService.find(cellName);
 		    Cell valCell = row.getCell(valC);
+		    if (valCell ==  null)
+		    	valCell = row.createCell(dniC);
 		    valCell.setCellType(CellType.NUMERIC);
 		    valCell.setCellValue(student.getVal());
 		    Double aux2 = (Double) getCellValue(row.getCell(priorityC));
@@ -320,8 +331,11 @@ public class ReaderStudent {
 		    		rq = r;
 		    }
 		    Cell stateCell = row.getCell(stateC);
+		    String state = rq.getState().getValue();
+		    if (rq.getState() == State.WAITING)
+		    	state = state + " " + rq.getWaitingNum();
 		    stateCell.setCellType(CellType.STRING);
-		    stateCell.setCellValue(rq.getState().getValue());
+		    stateCell.setCellValue(state);
 		    if (rq.getState() == State.REJECTED) {
 		    	Cell motCell = row.getCell(motiveC);
 		    	if (motCell == null)
@@ -330,26 +344,7 @@ public class ReaderStudent {
 			    motCell.setCellValue(rq.getMotive());
 		    }
 	    }
-	    
-//		for (int i = header + 1; sheet.getRow(i).getCell(0).getCellTypeEnum() == CellType.BLANK  ; i++) {
-//			Row row = sheet.getRow(i);
-//			Student student = studentService.find((String) getCellValue(row.getCell(nameC)));
-//			List<Request> requests = rqService.findByStudent(student);
-//			int o = i;
-//			for (Request r: requests) {
-//				Cell cellVal = row.getCell(valC);
-//				cellVal.setCellValue(student.getVal());
-//				Cell cellState = row.getCell(stateC);
-//				cellState.setCellValue(r.getState().getValue());
-//				if (r.getState() == State.REJECTED) {
-//					Cell cellMot = row.getCell(motiveC);
-//					cellMot.setCellValue(r.getMotive());
-//				}
-//				row = sheet.getRow(o++);
-//			}
-//			i = i + requests.size()-1;
-//		}
-		
+	    		
 		inputStream.close();
 		FileOutputStream out = new FileOutputStream(file);
 		wb.write(out);

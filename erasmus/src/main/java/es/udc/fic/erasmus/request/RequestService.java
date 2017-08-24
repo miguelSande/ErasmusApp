@@ -73,7 +73,7 @@ public class RequestService {
 				languages.add(Language.valueOf(s));
 			}
 			for (Language l: languages) {
-				if (language.superior(l)) 
+				if (language.checking(l)) 
 					return true;		
 			}
 		}
@@ -96,12 +96,22 @@ public class RequestService {
 				if (checkLanguage(student, r.getUniversity().getLanguage())) {
 					University uni = r.getUniversity();
 					//hay plazas disponibles en el erasmus
-					if (uni.getPosts() > 0) {
-						r.setState(State.ACCEPTED);
-						requestRepo.save(r);
-						pending=false;
-						uni.setPosts(uni.getPosts()-1);
-						uniRepo.save(uni);
+					if (!uni.isEmpty()) {
+						//comprobar la lista de espera
+						if (uni.getPosts() > 0) {
+							r.setState(State.ACCEPTED);
+							requestRepo.save(r);
+							pending=false;
+							uni.setPosts(uni.getPosts()-1);
+							uniRepo.save(uni);
+						}
+						else {
+							r.setState(State.WAITING);
+							r.setWaitingNum(uni.getWaiting()+1);
+							requestRepo.save(r);
+							uni.setWaiting(uni.getWaiting()+1);
+							uniRepo.save(uni);
+						}
 					}
 					else {
 						r.setState(State.REJECTED);

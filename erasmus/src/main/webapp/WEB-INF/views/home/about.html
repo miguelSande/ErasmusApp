@@ -12,8 +12,50 @@
 <div th:replace="fragments/layout :: header"></div>
 <div class="container">
     <p class="lead text-center">
-        About
+        Para el procesado son necesarios 2 excel, uno con las ofertas de las univesidades y otro con las peticiones de los alumnos.
+        Para el correcto funcionamiento es necesario que se cumpla la posición de los campos o el correcto nombre de las columnas.
     </p>
+    <p>
+    	En el documento de las universidades son necesarios los campos:
+    </p>
+    <div class="table-responsive">
+    	<table class="table">
+    		<thead>
+    			<tr>
+    				<th>País</th>
+    				<th>Año academico</th>
+    				<th>Número</th>
+    				<th>Duración</th>
+    				<th>Plazas disponibles</th>
+    				<th>Nombre</th>
+    				<th>Idioma requerido</th>
+    			</tr>
+    		</thead>
+    	</table>
+    </div>
+    <p>
+    	En el documento de las peticiones son necesarios los campos:
+    </p>
+    <div class="table-responsive">
+    	<table class="table">
+    		<thead>
+    			<tr>
+    				<th>Nombre alumno</th>
+    				<th>DNI</th>
+    				<th>Destino</th>
+    				<th>Prioridad</th>
+    				<th>Inicio</th>
+    				<th>Estado</th>
+    				<th>Idiomas del alumno</th>
+    				<th>Pruebas de idioma</th>
+    				<th>nota media</th>
+    				<th>otros meritos</th>
+    				<th>valoración</th>
+    				<th>motivo rechazo</th>
+    			</tr>
+    		</thead>
+    	</table>
+    </div>
 </div>
 <div th:replace="fragments/layout :: footer"></div>
 </body>

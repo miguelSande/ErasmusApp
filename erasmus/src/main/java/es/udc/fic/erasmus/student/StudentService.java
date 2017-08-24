@@ -10,12 +10,18 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.udc.fic.erasmus.request.Request;
+import es.udc.fic.erasmus.request.RequestService;
+
 @Service
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class StudentService {
 	
 	@Autowired
 	private StudentRepository studentRepo;
+	
+	@Autowired
+	private RequestService rqService;
 	
 	private static double round(double value, int places) {
 		if (places < 0)
@@ -27,19 +33,26 @@ public class StudentService {
 	
 	@Transactional
 	public Student create(Student student) {
+		if (studentRepo.exists(student.getDni())) {
+			Student actual = studentRepo.findByDni(student.getDni());
+			actual.setVal(null);
+			actual.setLang_test(student.getLang_test());
+			actual.setLanguage(student.getLanguage());
+			actual.setNote(student.getNote());
+			actual.setOthers(student.getOthers());
+			studentRepo.save(actual);
+			return actual;
+		}
 		studentRepo.save(student);
 		return student;
 	}
 	
-	public boolean exists(String name) {
-		Student student = studentRepo.findByName(name);
-		if (student == null)
-			return false;
-		return true;
+	public boolean exists(String dni) {
+		return studentRepo.exists(dni);
 	}
 	
-	public Student find(String name) {
-		return studentRepo.findByName(name);
+	public Student find(String dni) {
+		return studentRepo.findByDni(dni);
 	}
 	
 	public Student calculateVal(Student student) {
@@ -48,7 +61,17 @@ public class StudentService {
 			val = val + 0.25;
 		if (student.getLanguage() != null && student.getLanguage().split(",").length > 1)
 			val = val + 0.25;
-		//comprobar que el grado es superior al que piden la oferta
+		List<Request> rqs = rqService.findByStudent(student);
+		for (Request r: rqs) {
+			if (r.getUniversity().getLanguage() == null && student.getLanguage() != null && student.getLanguage().toUpperCase().contains("PROBA")) {
+				val = val + 0.25;
+				break;
+			}
+			if (r.getUniversity().getLanguage() != null && r.getUniversity().getLanguage().superior(student.getLanguage())) {
+				val = val + 0.25;
+				break;
+			}					
+		}
 		student.setVal(round(val,4));
 		return student;
 	}
@@ -56,7 +79,6 @@ public class StudentService {
 	@Transactional
 	public void calculateVal() {
 		List<Student> students = studentRepo.findByValIsNull();
-		//comprobar que solo se aplica a los de la solicitud
 		for (Student s: students) {
 			s = calculateVal(s);
 			studentRepo.save(s);

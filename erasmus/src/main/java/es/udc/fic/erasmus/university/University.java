@@ -30,6 +30,10 @@ public class University implements Serializable {
 	
 	private Long posts;
 	
+	private boolean empty;
+	
+	private int waiting;
+	
 	public University() {}
 
 	public University(String name, Language language, String year, Long duration, String country, Long posts) {
@@ -39,6 +43,8 @@ public class University implements Serializable {
 		this.duration = duration;
 		this.country = country;
 		this.posts = posts;
+		this.empty = (posts == 0);
+		this.waiting = 0;
 	}
 
 	public Long getUn_id() {
@@ -75,6 +81,22 @@ public class University implements Serializable {
 
 	public void setDuration(Long duration) {
 		this.duration = duration;
+	}
+
+	public boolean isEmpty() {
+		return empty;
+	}
+
+	public void setEmpty(boolean empty) {
+		this.empty = empty;
+	}
+
+	public int getWaiting() {
+		return waiting;
+	}
+
+	public void setWaiting(int waiting) {
+		this.waiting = waiting;
 	}
 
 	public String getCountry() {

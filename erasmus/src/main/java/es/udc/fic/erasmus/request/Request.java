@@ -41,6 +41,8 @@ public class Request implements Serializable {
 	
 	@Enumerated(EnumType.STRING)
 	private State state;
+	
+	private int waitingNum;
 
 	public Request() {}
 	
@@ -50,6 +52,7 @@ public class Request implements Serializable {
 		this.priority = priority;
 		this.startDate = startDate;
 		this.state = State.PENDING;
+		this.waitingNum = 0;
 	}
 
 	public Long getRe_id() {
@@ -102,6 +105,14 @@ public class Request implements Serializable {
 
 	public void setState(State state) {
 		this.state = state;
+	}
+
+	public int getWaitingNum() {
+		return waitingNum;
+	}
+
+	public void setWaitingNum(int waitingNum) {
+		this.waitingNum = waitingNum;
 	}
 
 }

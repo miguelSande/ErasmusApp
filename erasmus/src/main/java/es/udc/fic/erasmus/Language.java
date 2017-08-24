@@ -24,7 +24,7 @@ public enum Language {
 		return mCode;
 	}
 	
-	public boolean superior(Language language) {
+	public boolean checking(Language language) {
 		int lan1, lan2, grade1, grade2;
 		if (language == null)
 			return false;
@@ -34,6 +34,24 @@ public enum Language {
 			return true;
 		else
 			return false;		
+	}
+	
+	public boolean superior(String lan) {
+		int lan1, lan2, grade1, grade2;
+		if (lan == null)
+			return false;
+		if (lan.toUpperCase().contains("PROBA")  || lan.toUpperCase().contains("PRUEBA"))
+			return false;
+		lan = lan.replaceAll("\\s", "");
+		lan = lan.toUpperCase().replaceAll("-", "_");
+		for (String s: lan.split(",")) {
+			Language language = Language.valueOf(s);
+			lan1=mCode%10; lan2=language.mCode%10;
+			grade1=mCode/10; grade2=language.mCode/10;
+			if ((lan1 == lan2) && (grade2 > grade1))
+				return true;
+		}
+		return false;		
 	}
 	
 }
