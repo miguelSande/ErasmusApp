@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Process Files</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link href="../../../resources/css/bootstrap.min.css" rel="stylesheet" media="screen" th:href="@{/resources/css/bootstrap.min.css}"/>
+    <link href="../../../resources/css/core.css" rel="stylesheet" media="screen" th:href="@{/resources/css/core.css}" />
+    <script src="../../../resources/js/jquery.min.js" th:src="@{/resources/js/jquery.min.js}"></script>
+    <script src="../../../resources/js/bootstrap.min.js" th:src="@{/resources/js/bootstrap.min.js}"></script>
+</head>
+<body>
+<div th:replace="fragments/layout :: header"></div>
+
+<div th:if="${type}">
+	<form class="form-narrow form-horizontal" method="post" th:action="@{/preferencesU}" th:object="${preferencesUniForm}" th:fragment="preferencesUniForm">
+		<fieldset>
+			<legend>Introducir la columna de los campos (1...N)</legend>
+			<label for="name" class="control-label">Nombre de la universidad</label>
+            <input type="number" min="0" required="required" class="form-control" id="name" name="name" th:value="${1 + actual.institutionC}"/>
+            
+            <label for="language" class="control-label">Idioma</label>
+            <input type="number" min="0" required="required" class="form-control" id="language" name="language" th:value="${1 + actual.langC}"/>
+            
+            <label for="country" class="control-label">País</label>
+            <input type="number" min="0" required="required" class="form-control" id="country" name="country" th:value="${1 + actual.countryC}"/>
+            
+            <label for="year" class="control-label">Año</label>
+            <input type="number" min="0" required="required" class="form-control" id="year" name="year" th:value="${1 + actual.yearC}"/>
+           
+            <label for="number" class="control-label">Número</label>
+            <input type="number" min="0" required="required" class="form-control" id="number" name="number" th:value="${1 + actual.numberC}"/>
+           
+            <label for="duration" class="control-label">Duración</label>
+            <input type="number" min="0" required="required" class="form-control" id="duration" name="duration" th:value="${1 + actual.durationC}"/>
+           
+            <label for="posts" class="control-label">Plazas</label>
+            <input type="number" min="0" required="required" class="form-control" id="posts" name="post" th:value="${1 + actual.postsC}"/> 
+		 
+			<button type="submit">Hecho</button>
+		</fieldset>
+	</form>
+</div>
+<div th:unless="${type}">
+<form class="form-narrow form-horizontal" method="post" th:action="@{/preferencesS}" th:object="${preferencesStudentForm}" th:fragment="preferencesStudentForm">
+		<fieldset>
+			<legend>Introducir la columna de los campos (1...N)</legend>
+			<label for="name" class="control-label">Nombre del alumno</label>
+            <input type="number" min="0" required="required" class="form-control" id="name" name="name" th:value="${1 + actual.nameC}"/>
+            
+            <label for="dni" class="control-label">DNI</label>
+            <input type="number" min="0" required="required" class="form-control" id="dni" name="dni" th:value="${1 + actual.dniC}"/>
+            
+            <label for="language" class="control-label">Idioma</label>
+            <input type="number" min="0" required="required" class="form-control" id="language" name="language" th:value="${1 + actual.languageC}"/>
+            
+            <label for="others" class="control-label">Otros meritos</label>
+            <input type="number" min="0" required="required" class="form-control" id="others" name="others" th:value="${1 + actual.othersC}"/>
+            
+            <label for="note" class="control-label">Nota</label>
+            <input type="number" min="0" required="required" class="form-control" id="note" name="note" th:value="${1 + actual.noteC}"/>
+           
+            <label for="val" class="control-label">Valoración</label>
+            <input type="number" min="0" required="required" class="form-control" id="val" name="val" th:value="${1 + actual.valC}"/>
+           
+            <label for="test1" class="control-label">Prueba idiomas ingles</label>
+            <input type="number" min="0" required="required" class="form-control" id="test1" name="test1" th:value="${1 + actual.lang_test1C}"/>
+           
+            <label for="test2" class="control-label">Prueba idiomas portugues</label>
+            <input type="number" min="0" required="required" class="form-control" id="test2" name="test2" th:value="${1 + actual.lang_test2C}"/> 
+		
+			<label for="test3" class="control-label">Prueba idiomas italiano</label>
+            <input type="number" min="0" required="required" class="form-control" id="test3" name="test3" th:value="${1 + actual.lang_test3C}"/>
+            
+            <label for="test4" class="control-label">Prueba idiomas aleman</label>
+            <input type="number" min="0" required="required" class="form-control" id="test4" name="test4" th:value="${1 + actual.lang_test4C}"/>
+            
+            <label for="test5" class="control-label">Prueba idiomas frances</label>
+            <input type="number" min="0" required="required" class="form-control" id="test5" name="test5" th:value="${1 + actual.lang_test5C}"/>
+			
+			<button type="submit">Hecho</button>
+		</fieldset>
+	</form>
+</div>
+
+<div th:replace="fragments/layout :: footer"></div>
+</body>
+</html>

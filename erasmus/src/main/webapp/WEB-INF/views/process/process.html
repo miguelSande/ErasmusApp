@@ -10,27 +10,36 @@
 </head>
 <body>
 <div th:replace="fragments/layout :: header"></div>
-<form class="form form-horizontal" enctype="multipart/form-data" method="post" th:action="@{/process}" th:object="${processForm}" th:fragment="processForm">
+<form class="form-narrow form-horizontal" enctype="multipart/form-data" method="post" th:action="@{/process}" th:object="${processForm}" th:fragment="processForm">
     <!--/* Show general error message when form contains errors */-->
     <th:block th:if="${#fields.hasErrors('${processForm.*}')}">
         <div th:replace="fragments/components :: alert (type='danger', message='Form contains errors. Please try again.')">Alert</div>
     </th:block>
     <fieldset>
         <legend>Introducir los documentos</legend>
+        <span style="color: red;">Recuerda configurar los campos del documento</span>
         <div class="form-group" th:classappend="${#fields.hasErrors('pathUni')}? 'has-error'">
-            <label for="pathUni" class="col-lg-2 control-label">Documento de destinos</label>
-            <div class="col-lg-10">
-                <input type="file" accept=".xls,.xlsx,.XLS" required="required" class="form-control" id="pathUni" placeholder="Destinos" th:field="*{pathUni}" />
+            <label for="pathUni" class="control-label">Documento de destinos</label>
+            <div class="col-lg-10" style="margin-top: 10px">
+                <input type="file" accept=".xls,.xlsx,.XLS" required="required" id="pathUni" placeholder="Destinos" th:field="*{pathUni}" />
                 <span class="help-block" th:if="${#fields.hasErrors('pathUni')}" th:errors="*{pathUni}">Fichero incorrecto</span>
             </div>
+            <div class="col-lg-10" style="margin-top: 10px">
+            	<a th:href="@{/preferences?type=true}">configurar los campos del documento</a>    
+            </div>  
+                    
         </div>
         <div class="form-group" th:classappend="${#fields.hasErrors('pathRequest')}? 'has-error'">
-            <label for="pathRequest" class="col-lg-2 control-label">Documento de solicitudes</label>
-            <div class="col-lg-10">
-                <input type="file" accept=".xls,.xlsx,.XLS" required="required" class="form-control" id="pathRequest" placeholder="Solicitudes" th:field="*{pathRequest}"/>
+            <label for="pathRequest" class="control-label">Documento de solicitudes</label>
+            <div class="col-lg-10" style="margin-top: 10px">
+                <input type="file" accept=".xls,.xlsx,.XLS" required="required" id="pathRequest" placeholder="Solicitudes" th:field="*{pathRequest}"/>
                 <span class="help-block" th:if="${#fields.hasErrors('pathRequest')}" th:errors="*{pathRequest}">Fichero incorrecto</span>
             </div>
+            <div class="col-lg-10" style="margin-top: 10px">
+            	<a th:href="@{/preferences?type=false}">configurar los campos del documento</a>    
+            </div> 
         </div>
+        
         <div class="form-group">
             <div class="col-lg-offset-2 col-lg-10">
                 <button type="submit" class="btn btn-default">Procesar</button>

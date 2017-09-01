@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import es.udc.fic.erasmus.State;
 import es.udc.fic.erasmus.error.UniversityNotFoundException;
+import es.udc.fic.erasmus.preferences.PreferencesService;
 import es.udc.fic.erasmus.request.Request;
 import es.udc.fic.erasmus.request.RequestService;
 import es.udc.fic.erasmus.student.Student;
@@ -41,23 +42,49 @@ public class ReaderStudent {
 	@Autowired
 	private StudentService studentService;
 	
-	private int nameC = 3;
-	private int dniC = 4;
-	private int languageC = 12;
-	private int othersC = 20;
-	private int noteC = 19;
-	private int valC = 21;
-	private int lang_test1C = 13;
-	private int lang_test2C = 14;
-	private int lang_test3C = 15;
-	private int lang_test4C = 16;
-	private int lang_test5C = 17;
+	@Autowired
+	private PreferencesService service;
+		
+	private int nameC;
+	private int dniC;
+	private int languageC;
+	private int othersC;
+	private int noteC;
+	private int valC;
+	private int lang_test1C;
+	private int lang_test2C;
+	private int lang_test3C;
+	private int lang_test4C;
+	private int lang_test5C;
 	
-	private int uniC = 7;
-	private int priorityC = 8;
-	private int startC = 10;
-	private int motiveC = 22;
-	private int stateC = 11;
+	private int uniC;
+	private int priorityC;
+	private int startC;
+	private int motiveC;
+	private int stateC;
+	
+	private void init() {
+		int[] preferencesR = service.find("default").getRequestCols();
+		int[] preferencesS = service.find("default").getStudentCols();
+		
+		nameC = preferencesS[0];
+		dniC = preferencesS[1];
+		languageC = preferencesS[2];
+		othersC = preferencesS[3];
+		noteC = preferencesS[4];
+		valC = preferencesS[5];
+		lang_test1C = preferencesS[6];
+		lang_test2C = preferencesS[7];
+		lang_test3C = preferencesS[8];
+		lang_test4C = preferencesS[9];
+		lang_test5C = preferencesS[10];
+		
+		uniC = preferencesR[0];
+		priorityC = preferencesR[1];
+		startC = preferencesR[2];
+		motiveC = preferencesR[3];
+		stateC = preferencesR[4];
+	}
 
 	 private Workbook getWorkbook(FileInputStream input, String path) throws IOException {
 			Workbook wb;
@@ -96,55 +123,55 @@ public class ReaderStudent {
 		}
 		
 		private void setColumns(Iterator<Cell> headerIt) {
-			while (headerIt.hasNext()) {
-				Cell cell = headerIt.next();
-				String value = cell.getStringCellValue();
-				switch(value) {
-				case "Nombre":
-					nameC = cell.getColumnIndex();
-					break;
-				case "DNI":
-					dniC = cell.getColumnIndex();
-					break;
-				case "Institución":
-					uniC = cell.getColumnIndex();
-					break;
-				case "Orden":
-					priorityC = cell.getColumnIndex();
-					break;
-				case "Inicio (semestre)":
-					startC = cell.getColumnIndex();
-					break;
-				case "Estado de solicitud - interno":
-					stateC = cell.getColumnIndex();
-					break;
-				case "Certificación de idiomas":
-					languageC = cell.getColumnIndex();
-					break;
-				case "NOTA MEDIA":
-					noteC = cell.getColumnIndex();
-					break;
-				case "OUTROS MERITOS":
-					othersC = cell.getColumnIndex();
-					break;
-				case "Valoración":
-					valC = cell.getColumnIndex();
-					break;
-				case "MOTIVOS DE REXEITAMENTO":
-					motiveC = cell.getColumnIndex();
-					break;
-				}
-				if (value.toUpperCase().contains("ENGLISH"))
-					lang_test1C = cell.getColumnIndex();
-				if (value.toUpperCase().contains("FRANCÉS"))
-					lang_test2C = cell.getColumnIndex();
-				if (value.toUpperCase().contains("ALEMÁN"))
-					lang_test3C = cell.getColumnIndex();
-				if (value.toUpperCase().contains("ITALIANO"))
-					lang_test4C = cell.getColumnIndex();
-				if (value.toUpperCase().contains("PORTUGUÉS"))
-					lang_test5C = cell.getColumnIndex();
-			}
+//			while (headerIt.hasNext()) {
+//				Cell cell = headerIt.next();
+//				String value = cell.getStringCellValue();
+//				switch(value) {
+//				case "Nombre":
+//					nameC = cell.getColumnIndex();
+//					break;
+//				case "DNI":
+//					dniC = cell.getColumnIndex();
+//					break;
+//				case "Institución":
+//					uniC = cell.getColumnIndex();
+//					break;
+//				case "Orden":
+//					priorityC = cell.getColumnIndex();
+//					break;
+//				case "Inicio (semestre)":
+//					startC = cell.getColumnIndex();
+//					break;
+//				case "Estado de solicitud - interno":
+//					stateC = cell.getColumnIndex();
+//					break;
+//				case "Certificación de idiomas":
+//					languageC = cell.getColumnIndex();
+//					break;
+//				case "NOTA MEDIA":
+//					noteC = cell.getColumnIndex();
+//					break;
+//				case "OUTROS MERITOS":
+//					othersC = cell.getColumnIndex();
+//					break;
+//				case "Valoración":
+//					valC = cell.getColumnIndex();
+//					break;
+//				case "MOTIVOS DE REXEITAMENTO":
+//					motiveC = cell.getColumnIndex();
+//					break;
+//				}
+//				if (value.toUpperCase().contains("ENGLISH"))
+//					lang_test1C = cell.getColumnIndex();
+//				if (value.toUpperCase().contains("FRANCÉS"))
+//					lang_test2C = cell.getColumnIndex();
+//				if (value.toUpperCase().contains("ALEMÁN"))
+//					lang_test3C = cell.getColumnIndex();
+//				if (value.toUpperCase().contains("ITALIANO"))
+//					lang_test4C = cell.getColumnIndex();
+//				if (value.toUpperCase().contains("PORTUGUÉS"))
+//					lang_test5C = cell.getColumnIndex();
+//			}
 		}
 		
 		private Student processStudentRow(Iterator<Cell> cellIt) {
@@ -217,6 +244,7 @@ public class ReaderStudent {
 		}
 		
 		public List<Student> readStudentExcel(File file, String name) throws IOException {
+			init();
 			List<Student> result = new ArrayList<>();
 			int header = 0, aux = 0;
 			FileInputStream inputStream = new FileInputStream(file);
@@ -253,6 +281,7 @@ public class ReaderStudent {
 		}
 		
 		public List<Request> readRequestExcel(File file, String name) throws IOException {
+			init();
 			List<Request> result = new ArrayList<>();
 			int header = 0, aux = 0;
 			FileInputStream inputStream = new FileInputStream(file);
@@ -289,6 +318,7 @@ public class ReaderStudent {
 		}
 		
 	public void writeChanges(File file, String name) throws IOException {
+		init();
 		int header = 0, aux = 0;
 		FileInputStream inputStream = new FileInputStream(file);
 		Workbook wb = getWorkbook(inputStream, name);

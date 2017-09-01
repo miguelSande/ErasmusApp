@@ -13,24 +13,41 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 
 import es.udc.fic.erasmus.Language;
+import es.udc.fic.erasmus.preferences.PreferencesService;
 import es.udc.fic.erasmus.university.University;
 
 @Service
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class ReaderUni {
 	
-	private int nameC = 8;
-	private int languageC = 9;
-	private int countryC = 1;
-	private int yearC = 2;
-	private int numberC = 3;
-	private int durationC = 4;
-	private int postsC = 7;
+	@Autowired
+	private PreferencesService service;
+	
+	private int nameC;
+	private int languageC;
+	private int countryC;
+	private int yearC;
+	private int numberC ;
+	private int durationC;
+	private int postsC;
+	
+	private void init() {
+		int[] preferences = service.find("default").getUniversityCols();
+		
+		nameC = preferences[0];
+		languageC = preferences[1];
+		countryC = preferences[2];
+		yearC = preferences[3];
+		numberC = preferences[4];
+		durationC = preferences[5];
+		postsC = preferences[6];
+	}
 	
 	private Workbook getWorkbook(FileInputStream input, String path) throws IOException {
 		Workbook wb;
@@ -59,33 +76,33 @@ public class ReaderUni {
 	}
 	
 	private void setColumns(Iterator<Cell> headerIt) {
-		while (headerIt.hasNext()) {
-			Cell cell = headerIt.next();
-			String value = cell.getStringCellValue();
-			switch(value) {
-			case "Relation: Country":
-				countryC = cell.getColumnIndex(); 
-				break;
-			case "Academic year":
-				yearC = cell.getColumnIndex();
-				break;
-			case "Number":
-				numberC = cell.getColumnIndex();
-				break;
-			case "Total duration":
-				durationC = cell.getColumnIndex();
-				break;
-			case "Remaining seats":
-				postsC = cell.getColumnIndex();
-				break;
-			case "Relation: External institutions":
-				nameC = cell.getColumnIndex();
-				break;
-			case "Idioma":
-				languageC = cell.getColumnIndex();
-				break;
-			}
-		}
+//		while (headerIt.hasNext()) {
+//			Cell cell = headerIt.next();
+//			String value = cell.getStringCellValue();
+//			switch(value) {
+//			case "Relation: Country":
+//				countryC = cell.getColumnIndex(); 
+//				break;
+//			case "Academic year":
+//				yearC = cell.getColumnIndex();
+//				break;
+//			case "Number":
+//				numberC = cell.getColumnIndex();
+//				break;
+//			case "Total duration":
+//				durationC = cell.getColumnIndex();
+//				break;
+//			case "Remaining seats":
+//				postsC = cell.getColumnIndex();
+//				break;
+//			case "Relation: External institutions":
+//				nameC = cell.getColumnIndex();
+//				break;
+//			case "Idioma":
+//				languageC = cell.getColumnIndex();
+//				break;
+//			}
+//		}
 	}
 	
 	private University processRow(Iterator<Cell> cellIt) {
@@ -127,6 +144,7 @@ public class ReaderUni {
 	}
 	
 	public List<University> readUniExcel(File file,String name) throws IOException {
+		init();
 		List<University> result = new ArrayList<>();
 		FileInputStream inputStream = new FileInputStream(file);
 		Workbook wb = getWorkbook(inputStream, name);
