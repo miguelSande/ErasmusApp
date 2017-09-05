@@ -27,11 +27,26 @@ public class PreferencesController {
 		return "preference/preferences";
 	}
 	
+	@RequestMapping(value = "preferencesString", params = {"type"})
+	String preferencesS(@RequestParam(value="type") boolean type, Model model) {
+		model.addAttribute("type", type);
+		model.addAttribute("actual", service.findString("default"));
+		if (type) 
+			model.addAttribute(new PreferencesStringUniForm());
+		else 
+			model.addAttribute(new PreferencesStringStudentForm());
+		return "preference/preferencesString";
+	}
+	
 	@RequestMapping(value = "preferencesU", method = RequestMethod.POST)
 	String configU(Model model, @ModelAttribute PreferencesUniForm form) {
 		Preferences actual = service.find("default");
+		PreferencesString pre = service.findString("default");
 		actual.setUniversityCols(form.getColums());
-		service.create(actual);
+		actual.setActive(true);
+		service.save(actual);
+		pre.setActive(false);
+		service.save(pre);
 		model.addAttribute(new ProcessForm());
 		return "process/process";
 	}
@@ -39,9 +54,40 @@ public class PreferencesController {
 	@RequestMapping(value = "preferencesS", method = RequestMethod.POST)
 	String configS(Model model, @ModelAttribute PreferencesStudentForm form) {
 		Preferences actual = service.find("default");
+		PreferencesString pre = service.findString("default");
 		actual.setStudentCols(form.getStudentColums());
 		actual.setRequestCols(form.getRequestColums());
-		service.create(actual);
+		actual.setActive(true);
+		service.save(actual);
+		pre.setActive(false);
+		service.save(pre);
+		model.addAttribute(new ProcessForm());
+		return "process/process";
+	}
+	
+	@RequestMapping(value = "preferencesSU", method = RequestMethod.POST)
+	String configU(Model model, @ModelAttribute PreferencesStringUniForm form) {
+		PreferencesString actual = service.findString("default");
+		Preferences pre = service.find("default");
+		actual.setUniversity(form.getColums());
+		actual.setActive(true);
+		service.save(actual);
+		pre.setActive(false);
+		service.save(pre);
+		model.addAttribute(new ProcessForm());
+		return "process/process";
+	}
+	
+	@RequestMapping(value = "preferencesSS", method = RequestMethod.POST)
+	String configS(Model model, @ModelAttribute PreferencesStringStudentForm form) {
+		PreferencesString actual = service.findString("default");
+		Preferences pre = service.find("default");
+		actual.setStudent(form.getStudentColums());
+		actual.setRequest(form.getRequestColums());
+		actual.setActive(true);
+		service.save(actual);
+		pre.setActive(false);
+		service.save(pre);
 		model.addAttribute(new ProcessForm());
 		return "process/process";
 	}

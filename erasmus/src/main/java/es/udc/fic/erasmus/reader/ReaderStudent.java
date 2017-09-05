@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import es.udc.fic.erasmus.State;
 import es.udc.fic.erasmus.error.UniversityNotFoundException;
 import es.udc.fic.erasmus.preferences.PreferencesService;
+import es.udc.fic.erasmus.preferences.PreferencesString;
 import es.udc.fic.erasmus.request.Request;
 import es.udc.fic.erasmus.request.RequestService;
 import es.udc.fic.erasmus.student.Student;
@@ -123,55 +124,44 @@ public class ReaderStudent {
 		}
 		
 		private void setColumns(Iterator<Cell> headerIt) {
-//			while (headerIt.hasNext()) {
-//				Cell cell = headerIt.next();
-//				String value = cell.getStringCellValue();
-//				switch(value) {
-//				case "Nombre":
-//					nameC = cell.getColumnIndex();
-//					break;
-//				case "DNI":
-//					dniC = cell.getColumnIndex();
-//					break;
-//				case "Institución":
-//					uniC = cell.getColumnIndex();
-//					break;
-//				case "Orden":
-//					priorityC = cell.getColumnIndex();
-//					break;
-//				case "Inicio (semestre)":
-//					startC = cell.getColumnIndex();
-//					break;
-//				case "Estado de solicitud - interno":
-//					stateC = cell.getColumnIndex();
-//					break;
-//				case "Certificación de idiomas":
-//					languageC = cell.getColumnIndex();
-//					break;
-//				case "NOTA MEDIA":
-//					noteC = cell.getColumnIndex();
-//					break;
-//				case "OUTROS MERITOS":
-//					othersC = cell.getColumnIndex();
-//					break;
-//				case "Valoración":
-//					valC = cell.getColumnIndex();
-//					break;
-//				case "MOTIVOS DE REXEITAMENTO":
-//					motiveC = cell.getColumnIndex();
-//					break;
-//				}
-//				if (value.toUpperCase().contains("ENGLISH"))
-//					lang_test1C = cell.getColumnIndex();
-//				if (value.toUpperCase().contains("FRANCÉS"))
-//					lang_test2C = cell.getColumnIndex();
-//				if (value.toUpperCase().contains("ALEMÁN"))
-//					lang_test3C = cell.getColumnIndex();
-//				if (value.toUpperCase().contains("ITALIANO"))
-//					lang_test4C = cell.getColumnIndex();
-//				if (value.toUpperCase().contains("PORTUGUÉS"))
-//					lang_test5C = cell.getColumnIndex();
-//			}
+			PreferencesString pre = service.findString("default");
+			while (headerIt.hasNext()) {
+				Cell cell = headerIt.next();
+				String value = cell.getStringCellValue();
+				
+				if (value.equals(pre.getName()))
+					nameC = cell.getColumnIndex();
+				if (value.equals(pre.getDni()))
+					dniC = cell.getColumnIndex();
+				if (value.equals(pre.getUni()))
+					uniC = cell.getColumnIndex();
+				if (value.equals(pre.getPriority()))
+					priorityC = cell.getColumnIndex();
+				if (value.equals(pre.getStart()))
+					startC = cell.getColumnIndex();
+				if (value.equals(pre.getState()))
+					stateC = cell.getColumnIndex();
+				if (value.equals(pre.getLanguage()))
+					languageC = cell.getColumnIndex();
+				if (value.equals(pre.getNote()))
+					noteC = cell.getColumnIndex();
+				if (value.equals(pre.getOthers()))
+					othersC = cell.getColumnIndex();
+				if (value.equals(pre.getVal()))
+					valC = cell.getColumnIndex();
+				if (value.equals(pre.getMotive()))
+					motiveC = cell.getColumnIndex();				
+				if (value.toUpperCase().contains("INGLES") || value.toUpperCase().contains("ENGLISH"))
+					lang_test1C = cell.getColumnIndex();
+				if (value.toUpperCase().contains("FRANCÉS") || value.toUpperCase().contains("FRENCH"))
+					lang_test2C = cell.getColumnIndex();
+				if (value.toUpperCase().contains("ALEMÁN") || value.toUpperCase().contains("GERMAN"))
+					lang_test3C = cell.getColumnIndex();
+				if (value.toUpperCase().contains("ITALIANO") || value.toUpperCase().contains("ITALY"))
+					lang_test4C = cell.getColumnIndex();
+				if (value.toUpperCase().contains("PORTUGUÉS") || value.toUpperCase().contains("PORTUGUESS"))
+					lang_test5C = cell.getColumnIndex();
+			}
 		}
 		
 		private Student processStudentRow(Iterator<Cell> cellIt) {
@@ -218,7 +208,6 @@ public class ReaderStudent {
 		private Request processRequestRow(Iterator<Cell> cellIt) {
 			String dni = null, university = null, start = null;
 			Long priority = null;
-			Double aux;
 			while (cellIt.hasNext()) {
 				Cell cell = cellIt.next();
 				int column = cell.getColumnIndex();
@@ -229,7 +218,7 @@ public class ReaderStudent {
 				if (column == startC)
 					start = (String) getCellValue(cell);
 				if (column == priorityC) {
-					aux = (Double) getCellValue(cell);
+					 Double aux = (Double) getCellValue(cell);
 					//solucion problema de parada
 					if (aux == null)
 						return null;
@@ -243,15 +232,14 @@ public class ReaderStudent {
 			return new Request(studentService.find(dni), uniRepo.findByName(university), priority, start);
 		}
 		
-		public List<Student> readStudentExcel(File file, String name) throws IOException {
-			init();
+		public List<Student> readStudentExcel(File file, String name) throws IOException {			
 			List<Student> result = new ArrayList<>();
 			int header = 0, aux = 0;
 			FileInputStream inputStream = new FileInputStream(file);
 			Workbook wb = getWorkbook(inputStream, name);
 			Sheet sheet = wb.getSheetAt(0);
 			Iterator<Row> iterator = sheet.iterator();
-						
+			
 			for (int i = 0; i < sheet.getPhysicalNumberOfRows(); i++) {
 				if (sheet.getRow(i).getPhysicalNumberOfCells() > aux) {
 					aux = sheet.getRow(i).getPhysicalNumberOfCells();
@@ -264,8 +252,11 @@ public class ReaderStudent {
 			if (iterator.hasNext()) {
 				Row header_row = iterator.next();
 				Iterator<Cell> headerIt = header_row.cellIterator();
-				setColumns(headerIt);
-			}
+				if (service.find("default").isActive())
+					init();
+				if (service.findString("default").isActive())
+					setColumns(headerIt);
+			}			
 			
 			while (iterator.hasNext()) {
 				Row row = iterator.next();
@@ -281,7 +272,6 @@ public class ReaderStudent {
 		}
 		
 		public List<Request> readRequestExcel(File file, String name) throws IOException {
-			init();
 			List<Request> result = new ArrayList<>();
 			int header = 0, aux = 0;
 			FileInputStream inputStream = new FileInputStream(file);
@@ -301,7 +291,10 @@ public class ReaderStudent {
 			if (iterator.hasNext()) {
 				Row header_row = iterator.next();
 				Iterator<Cell> headerIt = header_row.cellIterator();
-				setColumns(headerIt);
+				if (service.find("default").isActive())
+					init();
+				if (service.findString("default").isActive())
+					setColumns(headerIt);
 			}
 			
 			while (iterator.hasNext()) {
@@ -318,7 +311,6 @@ public class ReaderStudent {
 		}
 		
 	public void writeChanges(File file, String name) throws IOException {
-		init();
 		int header = 0, aux = 0;
 		FileInputStream inputStream = new FileInputStream(file);
 		Workbook wb = getWorkbook(inputStream, name);
@@ -333,11 +325,14 @@ public class ReaderStudent {
 		}			
 		for (int i = 0; i < header || !iterator.hasNext(); i++) {
 			iterator.next();
-		}
+		}			
 		if (iterator.hasNext()) {
 			Row header_row = iterator.next();
 			Iterator<Cell> headerIt = header_row.cellIterator();
-			setColumns(headerIt);
+			if (service.find("default").isActive())
+				init();
+			if (service.findString("default").isActive())
+				setColumns(headerIt);
 		}    
 	    
 	    for (int i = header + 1; i < sheet.getPhysicalNumberOfRows(); i++) {

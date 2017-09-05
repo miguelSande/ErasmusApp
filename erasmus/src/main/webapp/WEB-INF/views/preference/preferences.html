@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Process Files</title>
+    <title>Configure fields</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link href="../../../resources/css/bootstrap.min.css" rel="stylesheet" media="screen" th:href="@{/resources/css/bootstrap.min.css}"/>
     <link href="../../../resources/css/core.css" rel="stylesheet" media="screen" th:href="@{/resources/css/core.css}" />
@@ -12,9 +12,12 @@
 <div th:replace="fragments/layout :: header"></div>
 
 <div th:if="${type}">
-	<form class="form-narrow form-horizontal" method="post" th:action="@{/preferencesU}" th:object="${preferencesUniForm}" th:fragment="preferencesUniForm">
+	<form class="form-narrow form-horizontal" method="post" th:action="@{/preferencesU}" th:object="${preferencesUniForm}" th:fragment="preferencesUniForm">		
 		<fieldset>
 			<legend>Introducir la columna de los campos (1...N)</legend>
+			<div align="right">
+			<a th:href="@{/preferencesString?type={type}(type = ${type})}">Configurar por nombre</a>
+			</div>
 			<label for="name" class="control-label">Nombre de la universidad</label>
             <input type="number" min="0" required="required" class="form-control" id="name" name="name" th:value="${1 + actual.institutionC}"/>
             
@@ -34,7 +37,7 @@
             <input type="number" min="0" required="required" class="form-control" id="duration" name="duration" th:value="${1 + actual.durationC}"/>
            
             <label for="posts" class="control-label">Plazas</label>
-            <input type="number" min="0" required="required" class="form-control" id="posts" name="post" th:value="${1 + actual.postsC}"/> 
+            <input type="number" min="0" required="required" class="form-control" id="posts" name="posts" th:value="${1 + actual.postsC}"/> 
 		 
 			<button type="submit">Hecho</button>
 		</fieldset>
@@ -44,6 +47,11 @@
 <form class="form-narrow form-horizontal" method="post" th:action="@{/preferencesS}" th:object="${preferencesStudentForm}" th:fragment="preferencesStudentForm">
 		<fieldset>
 			<legend>Introducir la columna de los campos (1...N)</legend>
+			
+			<div align="right">
+			<a th:href="@{/preferencesString?type={type}(type = ${type})}">Configurar por nombre</a>
+			</div>
+			
 			<label for="name" class="control-label">Nombre del alumno</label>
             <input type="number" min="0" required="required" class="form-control" id="name" name="name" th:value="${1 + actual.nameC}"/>
             
@@ -77,6 +85,21 @@
             <label for="test5" class="control-label">Prueba idiomas frances</label>
             <input type="number" min="0" required="required" class="form-control" id="test5" name="test5" th:value="${1 + actual.lang_test5C}"/>
 			
+			<label for="uni" class="control-label">Nombre de la institución</label>
+            <input type="number" min="0" required="required" class="form-control" id="uni" name="uni" th:value="${1 + actual.uniC}"/>
+           
+            <label for="priority" class="control-label">Prioridad</label>
+            <input type="number" min="0" required="required" class="form-control" id="priority" name="priority" th:value="${1 + actual.priorityC}"/>
+            
+            <label for="start" class="control-label">Inicio</label>
+            <input type="number" min="0" required="required" class="form-control" id=start name="start" th:value="${1 + actual.startC}"/>
+            
+            <label for="motive" class="control-label">Motivo</label>
+            <input type="number" min="0" required="required" class="form-control" id="motive" name="motive" th:value="${1 + actual.motiveC}"/>
+           
+            <label for="state" class="control-label">Estado de la solicitud</label>
+            <input type="number" min="0" required="required" class="form-control" id="state" name="state" th:value="${1 + actual.stateC}"/>
+            
 			<button type="submit">Hecho</button>
 		</fieldset>
 	</form>

@@ -14,6 +14,8 @@ public class Preferences implements Serializable {
 	@Id
 	private String id;
 	
+	private boolean active;
+	
 	private int nameC;
 	private int dniC;
 	private int languageC;
@@ -44,6 +46,7 @@ public class Preferences implements Serializable {
 	
 	public Preferences(String id, int[] studentC, int[] requestC, int[] univerC) {
 		this.id = id;
+		this.active = false;
 		
 		this.nameC = studentC[0];
 		this.dniC = studentC[1];
@@ -74,6 +77,14 @@ public class Preferences implements Serializable {
 	
 	public String getId() {
 		return id;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	public int[] getUniversityCols() {

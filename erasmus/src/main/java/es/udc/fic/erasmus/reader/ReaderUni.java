@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import es.udc.fic.erasmus.Language;
 import es.udc.fic.erasmus.preferences.PreferencesService;
+import es.udc.fic.erasmus.preferences.PreferencesString;
 import es.udc.fic.erasmus.university.University;
 
 @Service
@@ -76,33 +77,25 @@ public class ReaderUni {
 	}
 	
 	private void setColumns(Iterator<Cell> headerIt) {
-//		while (headerIt.hasNext()) {
-//			Cell cell = headerIt.next();
-//			String value = cell.getStringCellValue();
-//			switch(value) {
-//			case "Relation: Country":
-//				countryC = cell.getColumnIndex(); 
-//				break;
-//			case "Academic year":
-//				yearC = cell.getColumnIndex();
-//				break;
-//			case "Number":
-//				numberC = cell.getColumnIndex();
-//				break;
-//			case "Total duration":
-//				durationC = cell.getColumnIndex();
-//				break;
-//			case "Remaining seats":
-//				postsC = cell.getColumnIndex();
-//				break;
-//			case "Relation: External institutions":
-//				nameC = cell.getColumnIndex();
-//				break;
-//			case "Idioma":
-//				languageC = cell.getColumnIndex();
-//				break;
-//			}
-//		}
+		PreferencesString pre = service.findString("default");
+		while (headerIt.hasNext()) {
+			Cell cell = headerIt.next();
+			String value = cell.getStringCellValue();
+			if (value.equals(pre.getInstitution()))
+				nameC = cell.getColumnIndex();
+			if (value.equals(pre.getCountry()))
+				countryC = cell.getColumnIndex();
+			if (value.equals(pre.getLang()))
+				languageC = cell.getColumnIndex();
+			if (value.equals(pre.getYear()))
+				yearC = cell.getColumnIndex();
+			if (value.equals(pre.getNumber()))
+				numberC = cell.getColumnIndex();
+			if (value.equals(pre.getDuration()))
+				durationC = cell.getColumnIndex();
+			if (value.equals(pre.getPosts()))
+				postsC = cell.getColumnIndex();
+		}
 	}
 	
 	private University processRow(Iterator<Cell> cellIt) {
@@ -135,7 +128,7 @@ public class ReaderUni {
 				aux = Double.parseDouble(s.replace(",", "."));
 				duration = aux.longValue();
 			}
-			if (column == postsC) {
+			if (column == postsC) {				
 				aux = (Double) getCellValue(cell);
 				posts = aux.longValue();
 			}
@@ -144,18 +137,30 @@ public class ReaderUni {
 	}
 	
 	public List<University> readUniExcel(File file,String name) throws IOException {
-		init();
 		List<University> result = new ArrayList<>();
+		int aux = 0, header = 0;
 		FileInputStream inputStream = new FileInputStream(file);
 		Workbook wb = getWorkbook(inputStream, name);
 		Sheet sheet = wb.getSheetAt(0);
 		Iterator<Row> iterator = sheet.iterator();
 		
+		for (int i = 0; i < sheet.getPhysicalNumberOfRows(); i++) {
+			if (sheet.getRow(i).getPhysicalNumberOfCells() > aux) {
+				aux = sheet.getRow(i).getPhysicalNumberOfCells();
+				header = i;
+			}
+		}			
+		for (int i = 0; i < header || !iterator.hasNext(); i++) {
+			iterator.next();
+		}			
 		if (iterator.hasNext()) {
 			Row header_row = iterator.next();
 			Iterator<Cell> headerIt = header_row.cellIterator();
-			setColumns(headerIt);
-		}
+			if (service.find("default").isActive())
+				init();
+			if (service.findString("default").isActive()) 	
+				setColumns(headerIt);
+		}	
 		
 		while (iterator.hasNext()) {
 			Row row = iterator.next();

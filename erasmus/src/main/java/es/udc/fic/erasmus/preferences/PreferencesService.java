@@ -15,14 +15,21 @@ public class PreferencesService {
 	@Autowired
 	private PreferencesRepository repo;
 	
+	@Autowired
+	private PreferencesStringRepository repoString;
+	
 	@PostConstruct
 	protected void initialize() {
-		create(new Preferences("default", new int[]{3,4,12,20,19,21,14,15,16,17,18}, 
+		save(new Preferences("default", new int[]{3,4,12,20,19,21,14,15,16,17,18}, 
 				new int[]{7,8,10,22,11}, new int[]{7,8,0,1,2,3,6}));
+		save(new PreferencesString("default", new String[] {"Nombre", "D.N.I.", "Certificación  de idiomas", "OUTROS MERITOS", "NOTA MEDIA",
+				"Valoración", "test1", "test2", "test3", "test4", "test5"},
+				new String[] {"Institución", "Orden", "Inicio (semestre)", "MOTIVOS DE REXEITAMENTO", "Estado de solicitud - interno"},
+				new String[] {"Relation: External institutions", "Idioma", "Relation: Country", "Academic year", "Number", "Total duration", "Remaining seats"}));
 	}
 	
 	@Transactional
-	public Preferences create(Preferences preference) {
+	public Preferences save(Preferences preference) {
 		Preferences actual = repo.findOne(preference.getId());
 		if (actual == null) {
 			repo.save(preference);
@@ -31,11 +38,31 @@ public class PreferencesService {
 		actual.setRequestCols(preference.getRequestCols());
 		actual.setStudentCols(preference.getStudentCols());
 		actual.setUniversityCols(preference.getUniversityCols());
+		actual.setActive(preference.isActive());
 		repo.save(actual);
+		return actual;
+	}
+	
+	@Transactional
+	public PreferencesString save(PreferencesString preference) {
+		PreferencesString actual = repoString.findOne(preference.getId());
+		if (actual == null) {
+			repoString.save(preference);
+			return preference;
+		}
+		actual.setRequest(preference.getRequestCols());
+		actual.setStudent(preference.getStudentCols());
+		actual.setUniversity(preference.getUniversityCols());
+		actual.setActive(preference.isActive());
+		repoString.save(actual);
 		return actual;
 	}
 	
 	public Preferences find(String name) {
 		return repo.findOne(name);
+	}
+	
+	public PreferencesString findString(String name) {
+		return repoString.findOne(name);
 	}
 }

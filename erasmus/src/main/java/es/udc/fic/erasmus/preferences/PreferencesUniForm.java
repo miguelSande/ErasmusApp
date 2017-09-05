@@ -9,6 +9,7 @@ public class PreferencesUniForm {
 	private int number;
 	private int duration;
 	private int posts;
+	
 	public int getName() {
 		return name;
 	}
