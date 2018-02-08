@@ -8,16 +8,24 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * The Class PreferencesService.
+ */
 @Service
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class PreferencesService {
 
+	/** The repo. */
 	@Autowired
 	private PreferencesRepository repo;
 	
+	/** The repo string. */
 	@Autowired
 	private PreferencesStringRepository repoString;
 	
+	/**
+	 * Initialize both preferences as default.
+	 */
 	@PostConstruct
 	protected void initialize() {
 		save(new Preferences("default", new int[]{3,4,12,20,19,21,14,15,16,17,18}, 
@@ -28,6 +36,12 @@ public class PreferencesService {
 				new String[] {"Relation: External institutions", "Idioma", "Relation: Country", "Academic year", "Number", "Total duration", "Remaining seats"}));
 	}
 	
+	/**
+	 * Save.
+	 *
+	 * @param preference the preference
+	 * @return the preferences
+	 */
 	@Transactional
 	public Preferences save(Preferences preference) {
 		Preferences actual = repo.findOne(preference.getId());
@@ -43,6 +57,12 @@ public class PreferencesService {
 		return actual;
 	}
 	
+	/**
+	 * Save.
+	 *
+	 * @param preference the preference
+	 * @return the preferences string
+	 */
 	@Transactional
 	public PreferencesString save(PreferencesString preference) {
 		PreferencesString actual = repoString.findOne(preference.getId());
@@ -58,10 +78,22 @@ public class PreferencesService {
 		return actual;
 	}
 	
+	/**
+	 * Find.
+	 *
+	 * @param name the name
+	 * @return the preferences
+	 */
 	public Preferences find(String name) {
 		return repo.findOne(name);
 	}
 	
+	/**
+	 * Find string.
+	 *
+	 * @param name the name
+	 * @return the preferences string
+	 */
 	public PreferencesString findString(String name) {
 		return repoString.findOne(name);
 	}

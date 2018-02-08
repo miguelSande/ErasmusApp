@@ -30,40 +30,82 @@ import es.udc.fic.erasmus.student.Student;
 import es.udc.fic.erasmus.student.StudentService;
 import es.udc.fic.erasmus.university.UniversityRepository;
 
+/**
+ * The Class ReaderStudent.
+ * 
+ * Reads the student document and writes the result of the process.
+ */
 @Service
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class ReaderStudent {	
 	
+	/** The uni repo. */
 	@Autowired
 	private UniversityRepository uniRepo;
 	
+	/** The rq service. */
 	@Autowired
 	private RequestService rqService;
 	
+	/** The student service. */
 	@Autowired
 	private StudentService studentService;
 	
+	/** The service. */
 	@Autowired
 	private PreferencesService service;
 		
+	/** The name C. */
 	private int nameC;
+	
+	/** The dni C. */
 	private int dniC;
+	
+	/** The language C. */
 	private int languageC;
+	
+	/** The others C. */
 	private int othersC;
+	
+	/** The note C. */
 	private int noteC;
+	
+	/** The val C. */
 	private int valC;
+	
+	/** The lang test 1 C. */
 	private int lang_test1C;
+	
+	/** The lang test 2 C. */
 	private int lang_test2C;
+	
+	/** The lang test 3 C. */
 	private int lang_test3C;
+	
+	/** The lang test 4 C. */
 	private int lang_test4C;
+	
+	/** The lang test 5 C. */
 	private int lang_test5C;
 	
+	/** The uni C. */
 	private int uniC;
+	
+	/** The priority C. */
 	private int priorityC;
+	
+	/** The start C. */
 	private int startC;
+	
+	/** The motive C. */
 	private int motiveC;
+	
+	/** The state C. */
 	private int stateC;
 	
+	/**
+	 * Initialize the index for the needed columns.
+	 */
 	private void init() {
 		int[] preferencesR = service.find("default").getRequestCols();
 		int[] preferencesS = service.find("default").getStudentCols();
@@ -87,7 +129,16 @@ public class ReaderStudent {
 		stateC = preferencesR[4];
 	}
 
-	 private Workbook getWorkbook(FileInputStream input, String path) throws IOException {
+	 /**
+ 	 * Gets the workbook.
+ 	 *
+ 	 * @param input the input
+ 	 * @param path the path
+ 	 * @return the workbook
+ 	 * @throws IOException Signals that an I/O exception has occurred.
+ 	 * @throws IllegalArgumentException Signals that the final is not a excel.
+ 	 */
+ 	private Workbook getWorkbook(FileInputStream input, String path) throws IOException {
 			Workbook wb;
 			if (path.endsWith("xlsx")) {
 				wb = new XSSFWorkbook(input);
@@ -99,6 +150,12 @@ public class ReaderStudent {
 			return wb;
 		}
 		
+		/**
+		 * Gets the cell value.
+		 *
+		 * @param cell the cell
+		 * @return the cell value
+		 */
 		@SuppressWarnings("deprecation")
 		private Object getCellValue(Cell cell) {
 			switch(cell.getCellType()) {
@@ -113,16 +170,11 @@ public class ReaderStudent {
 			return null;
 		}
 		
-		private Boolean checkLanTest(Double lan1, Double lan2, Double lan3, Double lan4, Double lan5) {
-			Double[] results = {lan1,lan2,lan3,lan4,lan5};
-			boolean result = false;
-			for (Double d: results) {
-				if (d != null && d >= 5)
-					result = true;					
-			}
-			return result;
-		}
-		
+		/**
+		 * Sets the columns with the preferences string.
+		 *
+		 * @param headerIt the new columns
+		 */
 		private void setColumns(Iterator<Cell> headerIt) {
 			PreferencesString pre = service.findString("default");
 			while (headerIt.hasNext()) {
@@ -164,6 +216,12 @@ public class ReaderStudent {
 			}
 		}
 		
+		/**
+		 * Process student row. reads a row to get the student information.
+		 *
+		 * @param cellIt the cell it
+		 * @return the student
+		 */
 		private Student processStudentRow(Iterator<Cell> cellIt) {
 			String dni = null, name = null, others = null, language = null;
 			Long priority = null;
@@ -200,12 +258,21 @@ public class ReaderStudent {
 				}
 			}
 			if (priority != null && priority == 1)
-				return new Student(dni, name, note, others, language, checkLanTest(lan1,lan2,lan3,lan4,lan5));
+				return new Student(dni, name, note, others, language, (lan1 != null && lan1 >= 5),
+						(lan5 != null && lan5 >= 5), (lan3 != null && lan3 >= 5),
+						(lan4 != null && lan4 >= 5), (lan2 != null && lan2 >= 5));
 			else
 				return null;
 		}
 		
-		private Request processRequestRow(Iterator<Cell> cellIt) {
+		/**
+		 * Process request row. reads a row to get the request information.
+		 *
+		 * @param cellIt the cell it
+		 * @return the request
+		 * @throws UniversityNotFoundException the university not found exception
+		 */
+		private Request processRequestRow(Iterator<Cell> cellIt) throws UniversityNotFoundException {
 			String dni = null, university = null, start = null;
 			Long priority = null;
 			while (cellIt.hasNext()) {
@@ -232,6 +299,14 @@ public class ReaderStudent {
 			return new Request(studentService.find(dni), uniRepo.findByName(university), priority, start);
 		}
 		
+		/**
+		 * Read student excel. process the document searching for all the students.
+		 *
+		 * @param file the file
+		 * @param name the name
+		 * @return the list
+		 * @throws IOException Signals that an I/O exception has occurred.
+		 */
 		public List<Student> readStudentExcel(File file, String name) throws IOException {			
 			List<Student> result = new ArrayList<>();
 			int header = 0, aux = 0;
@@ -271,7 +346,16 @@ public class ReaderStudent {
 			return result;
 		}
 		
-		public List<Request> readRequestExcel(File file, String name) throws IOException {
+		/**
+		 * Read request excel. process the document searching for requests.
+		 *
+		 * @param file the file
+		 * @param name the name
+		 * @return the list
+		 * @throws IOException Signals that an I/O exception has occurred.
+		 * @throws UniversityNotFoundException the university not found exception
+		 */
+		public List<Request> readRequestExcel(File file, String name) throws IOException, UniversityNotFoundException {
 			List<Request> result = new ArrayList<>();
 			int header = 0, aux = 0;
 			FileInputStream inputStream = new FileInputStream(file);
@@ -310,7 +394,15 @@ public class ReaderStudent {
 			return result;
 		}
 		
-	public void writeChanges(File file, String name) throws IOException {
+	/**
+	 * Write changes. writes the results of the process.
+	 *
+	 * @param file the file
+	 * @param name the name
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws UniversityNotFoundException the university not found exception
+	 */
+	public void writeChanges(File file, String name) throws IOException, UniversityNotFoundException {
 		int header = 0, aux = 0;
 		FileInputStream inputStream = new FileInputStream(file);
 		Workbook wb = getWorkbook(inputStream, name);

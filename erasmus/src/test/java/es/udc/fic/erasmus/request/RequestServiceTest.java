@@ -36,8 +36,9 @@ public class RequestServiceTest extends WebAppConfigurationAware {
 		return university;
 	}
 	
-	private Student createStudent(String dni, Double note, String others, String language, Boolean lang_test) {
-		Student student = new Student(dni, "john doe", note, others, language, lang_test);
+	private Student createStudent(String dni, Double note, String others, String language, boolean lang_test) {
+		Student student = new Student(dni, "john doe", note, others, language, lang_test, lang_test,
+				lang_test, lang_test, lang_test);
 		student = stRepo.save(student);
 		return student;
 	}
@@ -57,12 +58,12 @@ public class RequestServiceTest extends WebAppConfigurationAware {
 	
 	@Test
 	public void testLanguage() {
-		Student student1 = createStudent("1",6.25, null, "EN - B2", null);
-		Student student2 = createStudent("2",6.25, null, "EN - B1", null);
-		Student student3 = createStudent("3",6.25, null, "EN - A2", null);
+		Student student1 = createStudent("1",6.25, null, "EN - B2", false);
+		Student student2 = createStudent("2",6.25, null, "EN - B1", false);
+		Student student3 = createStudent("3",6.25, null, "EN - A2", false);
 		Student student4 = createStudent("4",6.25, null, null, true);
 		Student student5 = createStudent("5",6.25, null, null, false);
-		Student student6 = createStudent("6",6.25, null, null, null);
+		Student student6 = createStudent("6",6.25, null, null, false);
 		University university = createUni(Language.EN_B1,6L);
 		University university2 = createUni(null,6L);
 		
@@ -92,8 +93,8 @@ public class RequestServiceTest extends WebAppConfigurationAware {
 	
 	@Test
 	public void testProcessBothAccepted() {
-		Student student1 = createStudent("6",6.25, "cosa", "EN_A2", null);
-		Student student2 = createStudent("7",5.25, null, "EN_A2", null);
+		Student student1 = createStudent("6",6.25, "cosa", "EN_A2", false);
+		Student student2 = createStudent("7",5.25, null, "EN_A2", false);
 		University university = createUni(Language.EN_A2, 2L);
 		Request rq = new Request(student1, university, 1L, "f");
 		rq = rqService.create(rq);
@@ -111,8 +112,8 @@ public class RequestServiceTest extends WebAppConfigurationAware {
 	
 	@Test
 	public void testProcessRejectedLanguage() {
-		Student student1 = createStudent("7",6.25, "cosa", "EN_B2", null);
-		Student student2 = createStudent("8",5.25, null, null, null);
+		Student student1 = createStudent("7",6.25, "cosa", "EN_B2", false);
+		Student student2 = createStudent("8",5.25, null, null, false);
 		University university = createUni(Language.EN_B1, 2L);
 		Request rq = new Request(student1, university, 1L, "f");
 		rq = rqService.create(rq);
@@ -131,8 +132,8 @@ public class RequestServiceTest extends WebAppConfigurationAware {
 	
 	@Test
 	public void testProcessSimpleAcepted() {
-		Student student = createStudent("7",5.25, null, null, null);
-		Student student2 = createStudent("8",5.00, null, "EN - B2", null);
+		Student student = createStudent("7",5.25, null, null, false);
+		Student student2 = createStudent("8",5.00, null, "EN - B2", false);
 		University university = createUni(null, 2L);
 		Request rq = new Request(student, university, 1L, "f");
 		Request rq2 = new Request(student2, university, 1L, "f");
@@ -150,8 +151,8 @@ public class RequestServiceTest extends WebAppConfigurationAware {
 	
 	@Test
 	public void testProcessRejectedSecondOption() {
-		Student student1 = createStudent("7",6.25, "cosa", "EN_B2", null);
-		Student student2 = createStudent("8",5.25, null, "EN_B2", null);
+		Student student1 = createStudent("7",6.25, "cosa", "EN_B2", false);
+		Student student2 = createStudent("8",5.25, null, "EN_B2", false);
 		University university = createUni(Language.EN_B1, 2L);
 		Request rq = new Request(student1, university, 1L, "f");
 		rq = rqService.create(rq);
@@ -174,9 +175,9 @@ public class RequestServiceTest extends WebAppConfigurationAware {
 	
 	@Test
 	public void testProcessRejectedOutOfPosts() {
-		Student student1 = createStudent("7",6.25, "cosa", "EN_B2", null);
-		Student student2 = createStudent("8",5.25, null, "EN_B2", null);
-		Student student3 = createStudent("9",5.00, null, "EN_B2", null);
+		Student student1 = createStudent("7",6.25, "cosa", "EN_B2", false);
+		Student student2 = createStudent("8",5.25, null, "EN_B2", false);
+		Student student3 = createStudent("9",5.00, null, "EN_B2", false);
 		University university = createUni(Language.EN_B1, 2L);
 		Request rq = new Request(student1, university, 1L, "f");
 		rq = rqService.create(rq);

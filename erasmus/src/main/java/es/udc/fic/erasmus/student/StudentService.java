@@ -13,16 +13,29 @@ import org.springframework.transaction.annotation.Transactional;
 import es.udc.fic.erasmus.request.Request;
 import es.udc.fic.erasmus.request.RequestService;
 
+/**
+ * The Class StudentService.
+ */
 @Service
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class StudentService {
 	
+	/** The student repo. */
 	@Autowired
 	private StudentRepository studentRepo;
 	
+	/** The rq service. */
 	@Autowired
 	private RequestService rqService;
 	
+	/**
+	 * Round. round a double.
+	 * Used for round the note to 4 decimals.
+	 *
+	 * @param value the value
+	 * @param places the places
+	 * @return the double
+	 */
 	private static double round(double value, int places) {
 		if (places < 0)
 			throw new IllegalArgumentException();
@@ -31,12 +44,22 @@ public class StudentService {
 		return bd.doubleValue();
 	}
 	
+	/**
+	 * Saves the student in DB.
+	 *
+	 * @param student the student
+	 * @return the student
+	 */
 	@Transactional
 	public Student create(Student student) {
 		if (studentRepo.exists(student.getDni())) {
 			Student actual = studentRepo.findByDni(student.getDni());
 			actual.setVal(null);
-			actual.setLang_test(student.getLang_test());
+			actual.setLang_test_en(student.isLang_test_en());
+			actual.setLang_test_pt(student.isLang_test_pt());
+			actual.setLang_test_it(student.isLang_test_it());
+			actual.setLang_test_ge(student.isLang_test_ge());
+			actual.setLang_test_fr(student.isLang_test_fr());
 			actual.setLanguage(student.getLanguage());
 			actual.setNote(student.getNote());
 			actual.setOthers(student.getOthers());
@@ -47,14 +70,33 @@ public class StudentService {
 		return student;
 	}
 	
+	/**
+	 * Exists. checks if the student already exists in DB.
+	 *
+	 * @param dni the dni
+	 * @return true, if successful
+	 */
 	public boolean exists(String dni) {
 		return studentRepo.exists(dni);
 	}
 	
+	/**
+	 * Find by DNI.
+	 *
+	 * @param dni the dni
+	 * @return the student
+	 */
 	public Student find(String dni) {
 		return studentRepo.findByDni(dni);
 	}
 	
+	/**
+	 * Calculate the value of the student.
+	 * 0.95*note
+	 * +0.25: has other courses, superior language requirements, knows additional languages.
+	 * @param student the student
+	 * @return the student
+	 */
 	public Student calculateVal(Student student) {
 		double val = student.getNote()*0.95;
 		if (student.getOthers() != null)
@@ -76,6 +118,9 @@ public class StudentService {
 		return student;
 	}
 	
+	/**
+	 * Calculates the value of all the new students (new student = student without a value).
+	 */
 	@Transactional
 	public void calculateVal() {
 		List<Student> students = studentRepo.findByValIsNull();

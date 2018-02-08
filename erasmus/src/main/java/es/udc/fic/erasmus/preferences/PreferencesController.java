@@ -10,12 +10,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import es.udc.fic.erasmus.home.ProcessForm;
 
+/**
+ * The Class PreferencesController.
+ */
 @Controller
 public class PreferencesController {
 
+	/** The service. */
 	@Autowired
 	private PreferencesService service;
 	
+	/**
+	 * Preferences. shows the form for the index columns.
+	 *
+	 * @param type the type
+	 * @param model the model
+	 * @return the string
+	 */
 	@RequestMapping(value = "preferences", params = {"type"})
 	String preferences(@RequestParam(value="type") boolean type, Model model) {
 		model.addAttribute("type", type);
@@ -27,6 +38,13 @@ public class PreferencesController {
 		return "preference/preferences";
 	}
 	
+	/**
+	 * Preferences S. shows the form for the name of the columns
+	 *
+	 * @param type the type
+	 * @param model the model
+	 * @return the string
+	 */
 	@RequestMapping(value = "preferencesString", params = {"type"})
 	String preferencesS(@RequestParam(value="type") boolean type, Model model) {
 		model.addAttribute("type", type);
@@ -38,6 +56,14 @@ public class PreferencesController {
 		return "preference/preferencesString";
 	}
 	
+	/**
+	 * Config U. configures the index of columns for the university document.
+	 *           Sets the preferences as active.
+	 *
+	 * @param model the model
+	 * @param form the form
+	 * @return the string
+	 */
 	@RequestMapping(value = "preferencesU", method = RequestMethod.POST)
 	String configU(Model model, @ModelAttribute PreferencesUniForm form) {
 		Preferences actual = service.find("default");
@@ -51,6 +77,14 @@ public class PreferencesController {
 		return "process/process";
 	}
 	
+	/**
+	 * Config S. configures the preferences for the index of the columns for the student document.
+	 *           sets the preferences as active.
+	 *
+	 * @param model the model
+	 * @param form the form
+	 * @return the string
+	 */
 	@RequestMapping(value = "preferencesS", method = RequestMethod.POST)
 	String configS(Model model, @ModelAttribute PreferencesStudentForm form) {
 		Preferences actual = service.find("default");
@@ -65,6 +99,14 @@ public class PreferencesController {
 		return "process/process";
 	}
 	
+	/**
+	 * Config U. configures the names of the columns for the university document.
+	 *           sets the preferences string as active.
+	 *
+	 * @param model the model
+	 * @param form the form
+	 * @return the string
+	 */
 	@RequestMapping(value = "preferencesSU", method = RequestMethod.POST)
 	String configU(Model model, @ModelAttribute PreferencesStringUniForm form) {
 		PreferencesString actual = service.findString("default");
@@ -78,6 +120,14 @@ public class PreferencesController {
 		return "process/process";
 	}
 	
+	/**
+	 * Config S. configures the names of the columns for the student document.
+	 *           sets the prefences string as active.
+	 *
+	 * @param model the model
+	 * @param form the form
+	 * @return the string
+	 */
 	@RequestMapping(value = "preferencesSS", method = RequestMethod.POST)
 	String configS(Model model, @ModelAttribute PreferencesStringStudentForm form) {
 		PreferencesString actual = service.findString("default");

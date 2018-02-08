@@ -23,21 +23,43 @@ import es.udc.fic.erasmus.preferences.PreferencesService;
 import es.udc.fic.erasmus.preferences.PreferencesString;
 import es.udc.fic.erasmus.university.University;
 
+/**
+ * The Class ReaderUni.
+ * 
+ * Reads the university document.
+ */
 @Service
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class ReaderUni {
 	
+	/** The service. */
 	@Autowired
 	private PreferencesService service;
 	
+	/** The name C. */
 	private int nameC;
+	
+	/** The language C. */
 	private int languageC;
+	
+	/** The country C. */
 	private int countryC;
+	
+	/** The year C. */
 	private int yearC;
+	
+	/** The number C. */
 	private int numberC ;
+	
+	/** The duration C. */
 	private int durationC;
+	
+	/** The posts C. */
 	private int postsC;
 	
+	/**
+	 * Initializes the columns.
+	 */
 	private void init() {
 		int[] preferences = service.find("default").getUniversityCols();
 		
@@ -50,6 +72,15 @@ public class ReaderUni {
 		postsC = preferences[6];
 	}
 	
+	/**
+	 * Gets the workbook.
+	 *
+	 * @param input the input
+	 * @param path the path
+	 * @return the workbook
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws IllegalArgumentException Signals that the file is not an Excel.
+	 */
 	private Workbook getWorkbook(FileInputStream input, String path) throws IOException {
 		Workbook wb;
 		if (path.endsWith("xlsx")) {
@@ -62,6 +93,12 @@ public class ReaderUni {
 		return wb;
 	}
 	
+	/**
+	 * Gets the cell value.
+	 *
+	 * @param cell the cell
+	 * @return the cell value
+	 */
 	@SuppressWarnings("deprecation")
 	private Object getCellValue(Cell cell) {
 		switch(cell.getCellType()) {
@@ -76,6 +113,11 @@ public class ReaderUni {
 		return null;
 	}
 	
+	/**
+	 * Sets the columns by the string preferences.
+	 *
+	 * @param headerIt the new columns
+	 */
 	private void setColumns(Iterator<Cell> headerIt) {
 		PreferencesString pre = service.findString("default");
 		while (headerIt.hasNext()) {
@@ -98,6 +140,12 @@ public class ReaderUni {
 		}
 	}
 	
+	/**
+	 * Process row. reads the row to get the university information.
+	 *
+	 * @param cellIt the cell it
+	 * @return the university
+	 */
 	private University processRow(Iterator<Cell> cellIt) {
 		String name = null, country = null, year = null;
 		Long number = null, duration = null, posts = null;
@@ -136,6 +184,14 @@ public class ReaderUni {
 		return new University(name, language, year, (duration/number), country, posts);
 	}
 	
+	/**
+	 * Read uni excel. process the document searching for all the universities.
+	 *
+	 * @param file the file
+	 * @param name the name
+	 * @return the list
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public List<University> readUniExcel(File file,String name) throws IOException {
 		List<University> result = new ArrayList<>();
 		int aux = 0, header = 0;

@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import es.udc.fic.erasmus.error.UniversityNotFoundException;
 import es.udc.fic.erasmus.reader.ReaderStudent;
 import es.udc.fic.erasmus.reader.ReaderUni;
 import es.udc.fic.erasmus.request.Request;
@@ -33,29 +34,49 @@ import es.udc.fic.erasmus.support.web.MessageHelper;
 import es.udc.fic.erasmus.university.University;
 import es.udc.fic.erasmus.university.UniversityService;
 
+/**
+ * The Class ProcessController.
+ */
 @Controller
 public class ProcessController {
 	
+	/** The Constant PROCESS_VIEW_NAME. */
 	private static final String PROCESS_VIEW_NAME = "process/process";
+	
+	/** The Constant RESULT_VIEW_NAME. */
 	private static final String RESULT_VIEW_NAME = "process/result";
 	
+	/** The uni service. */
 	@Autowired
 	private UniversityService uniService;
 	
+	/** The student service. */
 	@Autowired
 	private StudentService studentService;
 	
+	/** The request service. */
 	@Autowired
 	private RequestService requestService;
 	
+	/** The university reader. */
 	@Autowired
 	private ReaderUni readerU;
 	
+	/** The student reader. */
 	@Autowired
 	private ReaderStudent readerS;
 	
+	/** The Constant tmpDir. */
 	private static final String tmpDir = System.getProperty("java.io.tmpdir");
 	
+	/**
+	 * Convert. turns the multipartFile into a file located in the tmp directoty.
+	 *
+	 * @param file the file
+	 * @return the file
+	 * @throws IllegalStateException the illegal state exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private File convert(MultipartFile file) throws IllegalStateException, IOException {
 		File f = new File(tmpDir + File.separator + file.getOriginalFilename());
 		f.createNewFile();
@@ -65,12 +86,28 @@ public class ProcessController {
 		return f;
 	}
 	
+	/**
+	 * Shows the process form with error.
+	 *
+	 * @param model the model
+	 * @return the string
+	 */
 	@GetMapping("process")
-	String process(Model model) {
+	String process(Model model, @ModelAttribute("uni") String uni) {
+		model.addAttribute("uni", uni);
 		model.addAttribute(new ProcessForm());
 		return PROCESS_VIEW_NAME;	
 	}
 	
+	/**
+	 * Process. process the documents and shows the result, redirects in case of errors.
+	 *
+	 * @param model the model
+	 * @param processForm the process form
+	 * @param error the error
+	 * @param ra the ra
+	 * @return the string
+	 */
 	@RequestMapping(value="process", method=RequestMethod.POST)
 	String process(Model model,@ModelAttribute ProcessForm processForm, Errors error, RedirectAttributes ra) {
 		if (error.hasErrors())
@@ -84,7 +121,9 @@ public class ProcessController {
 			for (Student s: students) {
 				studentService.create(s);
 			}
-			List<Request> requests = readerS.readRequestExcel(convert(processForm.getPathRequest()), processForm.getPathRequest().getOriginalFilename());
+			List<Request> requests;
+			requests = readerS.readRequestExcel(convert(processForm.getPathRequest()), processForm.getPathRequest().getOriginalFilename());
+			
 			for (Request r: requests) {
 				requestService.create(r);
 			}
@@ -94,13 +133,29 @@ public class ProcessController {
 			model.addAttribute("requests", requestService.returnRequests(requests));
 			model.addAttribute("file", processForm.getPathRequest().getOriginalFilename());
 			return RESULT_VIEW_NAME;
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (UniversityNotFoundException e) {
+			MessageHelper.addErrorAttribute(ra, "process.uniFail");
+			ra.addFlashAttribute("uni", e.getName());
+			return "redirect:/process";
+		} catch (IllegalStateException e) {
 			MessageHelper.addErrorAttribute(ra, "process.fileError");
-			return PROCESS_VIEW_NAME;
-		}
+			model.addAttribute(new ProcessForm());
+			return "redirect:/process";
+		} catch (IOException e) {
+			MessageHelper.addErrorAttribute(ra, "process.fileError");
+			model.addAttribute(new ProcessForm());
+			return "redirect:/process";
+		} finally {}
 	}
 	
+	
+	/**
+	 * Download the excel with the results.
+	 *
+	 * @param response the response
+	 * @param name the name
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@RequestMapping(value="download", params = {"name"})
 	void download(HttpServletResponse response, @RequestParam(value="name") String name) throws IOException {
 		File file = new File(tmpDir+File.separator+name);

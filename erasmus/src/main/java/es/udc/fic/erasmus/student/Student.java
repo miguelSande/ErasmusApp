@@ -6,100 +6,295 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * The Class Student.
+ */
 @SuppressWarnings("serial")
 @Entity
 @Table(name="student")
 public class Student implements Serializable {
 	
+	/** The dni. */
 	@Id
 	private String dni;
 	
+	/** The name. */
 	private String name;
 	
+	/** The note. */
 	private Double note;
 	
+	/** The val. */
 	private Double val;
 	
+	/** The others. */
 	private String others;
 	
+	/** The language. */
 	private String language;
 	
-	private Boolean lang_test;
-
-	public Student() {}
+	/** The lang test en. */
+	private boolean lang_test_en;
 	
-	public Student(String dni, String name, Double note, String others, String language, Boolean lang_test) {
+	/** The lang test pt. */
+	private boolean lang_test_pt;
+	
+	/** The lang test ge. */
+	private boolean lang_test_ge;
+	
+	/** The lang test it. */
+	private boolean lang_test_it;
+	
+	/** The lang test fr. */
+	private boolean lang_test_fr;
+
+	/**
+	 * Instantiates a new student.
+	 * Necessary for Hibernate.
+	 */
+	public Student() {}
+
+	/**
+	 * Instantiates a new student.
+	 *
+	 * @param dni the dni
+	 * @param name the name
+	 * @param note the note
+	 * @param others the others
+	 * @param language the language
+	 * @param lang_test_en the lang test en
+	 * @param lang_test_pt the lang test pt
+	 * @param lang_test_ge the lang test ge
+	 * @param lang_test_it the lang test it
+	 * @param lang_test_fr the lang test fr
+	 */
+	public Student(String dni, String name, Double note, String others, String language,
+			boolean lang_test_en, boolean lang_test_pt, boolean lang_test_ge, boolean lang_test_it,
+			boolean lang_test_fr) {
 		this.dni = dni;
 		this.name = name;
 		this.note = note;
+		this.val = null;
 		this.others = others;
 		this.language = language;
-		this.lang_test = lang_test;
-		this.val = null;
+		this.lang_test_en = lang_test_en;
+		this.lang_test_pt = lang_test_pt;
+		this.lang_test_ge = lang_test_ge;
+		this.lang_test_it = lang_test_it;
+		this.lang_test_fr = lang_test_fr;
 	}
 
+	/**
+	 * Gets the dni.
+	 *
+	 * @return the dni
+	 */
 	public String getDni() {
 		return dni;
 	}
 
+	/**
+	 * Sets the dni.
+	 *
+	 * @param dni the new dni
+	 */
 	public void setDni(String dni) {
 		this.dni = dni;
 	}
 
+	/**
+	 * Gets the name.
+	 *
+	 * @return the name
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * Sets the name.
+	 *
+	 * @param name the new name
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	/**
+	 * Gets the note.
+	 *
+	 * @return the note
+	 */
 	public Double getNote() {
 		return note;
 	}
 
+	/**
+	 * Sets the note.
+	 *
+	 * @param note the new note
+	 */
 	public void setNote(Double note) {
 		this.note = note;
 	}
 
+	/**
+	 * Gets the val.
+	 *
+	 * @return the val
+	 */
 	public Double getVal() {
 		return val;
 	}
 
+	/**
+	 * Sets the val.
+	 *
+	 * @param val the new val
+	 */
 	public void setVal(Double val) {
 		this.val = val;
 	}
 
+	/**
+	 * Gets the others.
+	 *
+	 * @return the others
+	 */
 	public String getOthers() {
 		return others;
 	}
 
+	/**
+	 * Sets the others.
+	 *
+	 * @param others the new others
+	 */
 	public void setOthers(String others) {
 		this.others = others;
 	}
 
+	/**
+	 * Gets the language.
+	 *
+	 * @return the language
+	 */
 	public String getLanguage() {
 		return language;
 	}
 
+	/**
+	 * Sets the language.
+	 *
+	 * @param language the new language
+	 */
 	public void setLanguage(String language) {
 		this.language = language;
 	}
 
-	public Boolean getLang_test() {
-		return lang_test;
+	/**
+	 * Checks if is lang test en.
+	 *
+	 * @return true, if is lang test en
+	 */
+	public boolean isLang_test_en() {
+		return lang_test_en;
 	}
 
-	public void setLang_test(Boolean lang_test) {
-		this.lang_test = lang_test;
+	/**
+	 * Sets the lang test en.
+	 *
+	 * @param lang_test_en the new lang test en
+	 */
+	public void setLang_test_en(boolean lang_test_en) {
+		this.lang_test_en = lang_test_en;
 	}
 
+	/**
+	 * Checks if is lang test pt.
+	 *
+	 * @return true, if is lang test pt
+	 */
+	public boolean isLang_test_pt() {
+		return lang_test_pt;
+	}
+
+	/**
+	 * Sets the lang test pt.
+	 *
+	 * @param lang_test_pt the new lang test pt
+	 */
+	public void setLang_test_pt(boolean lang_test_pt) {
+		this.lang_test_pt = lang_test_pt;
+	}
+
+	/**
+	 * Checks if is lang test ge.
+	 *
+	 * @return true, if is lang test ge
+	 */
+	public boolean isLang_test_ge() {
+		return lang_test_ge;
+	}
+
+	/**
+	 * Sets the lang test ge.
+	 *
+	 * @param lang_test_ge the new lang test ge
+	 */
+	public void setLang_test_ge(boolean lang_test_ge) {
+		this.lang_test_ge = lang_test_ge;
+	}
+
+	/**
+	 * Checks if is lang test it.
+	 *
+	 * @return true, if is lang test it
+	 */
+	public boolean isLang_test_it() {
+		return lang_test_it;
+	}
+
+	/**
+	 * Sets the lang test it.
+	 *
+	 * @param lang_test_it the new lang test it
+	 */
+	public void setLang_test_it(boolean lang_test_it) {
+		this.lang_test_it = lang_test_it;
+	}
+
+	/**
+	 * Checks if is lang test fr.
+	 *
+	 * @return true, if is lang test fr
+	 */
+	public boolean isLang_test_fr() {
+		return lang_test_fr;
+	}
+
+	/**
+	 * Sets the lang test fr.
+	 *
+	 * @param lang_test_fr the new lang test fr
+	 */
+	public void setLang_test_fr(boolean lang_test_fr) {
+		this.lang_test_fr = lang_test_fr;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((dni == null) ? 0 : dni.hashCode());
-		result = prime * result + ((lang_test == null) ? 0 : lang_test.hashCode());
+		result = prime * result + (lang_test_en ? 1231 : 1237);
+		result = prime * result + (lang_test_fr ? 1231 : 1237);
+		result = prime * result + (lang_test_ge ? 1231 : 1237);
+		result = prime * result + (lang_test_it ? 1231 : 1237);
+		result = prime * result + (lang_test_pt ? 1231 : 1237);
 		result = prime * result + ((language == null) ? 0 : language.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((note == null) ? 0 : note.hashCode());
@@ -108,6 +303,9 @@ public class Student implements Serializable {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -122,10 +320,15 @@ public class Student implements Serializable {
 				return false;
 		} else if (!dni.equals(other.dni))
 			return false;
-		if (lang_test == null) {
-			if (other.lang_test != null)
-				return false;
-		} else if (!lang_test.equals(other.lang_test))
+		if (lang_test_en != other.lang_test_en)
+			return false;
+		if (lang_test_fr != other.lang_test_fr)
+			return false;
+		if (lang_test_ge != other.lang_test_ge)
+			return false;
+		if (lang_test_it != other.lang_test_it)
+			return false;
+		if (lang_test_pt != other.lang_test_pt)
 			return false;
 		if (language == null) {
 			if (other.language != null)

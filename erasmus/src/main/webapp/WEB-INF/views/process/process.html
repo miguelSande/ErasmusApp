@@ -7,9 +7,40 @@
     <link href="../../../resources/css/core.css" rel="stylesheet" media="screen" th:href="@{/resources/css/core.css}" />
     <script src="../../../resources/js/jquery.min.js" th:src="@{/resources/js/jquery.min.js}"></script>
     <script src="../../../resources/js/bootstrap.min.js" th:src="@{/resources/js/bootstrap.min.js}"></script>
+	<style type="text/css">
+	.spinner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-left: -100px; /* half width of the spinner gif */
+    margin-top: -100px; /* half height of the spinner gif */
+    text-align:center;
+    z-index:1234;
+    overflow: auto;
+    width: 200px; /* width of the spinner gif */
+    height: 202px; /*hight of the spinner gif +2px to fix IE8 issue */
+	}	
+	</style>
 </head>
 <body>
+<script type="text/javascript">
+$(document).ready(function(){
+    $('#button-submit').click(function() {
+        $('#spinner').show();
+    });
+});
+</script>
+<div id="spinner" class="spinner" style="display: none;">
+    <img id="img-spinner" src="http://thinkfuture.com/wp-content/uploads/2013/10/loading_spinner.gif" alt="Loading"/>
+</div>
+
 <div th:replace="fragments/layout :: header"></div>
+ <!-- /* Handle the flash message */-->
+    <th:block th:if="${message != null}">
+        <!-- /* The message code is returned from the @Controller */ -->
+        <div th:replace="fragments/components :: alert (type=${#strings.toLowerCase(message.type)}, message=#{${message.message}(${uni})})">&nbsp;</div>
+    </th:block>
+    
 <form class="form-narrow form-horizontal" enctype="multipart/form-data" method="post" th:action="@{/process}" th:object="${processForm}" th:fragment="processForm">
     <!--/* Show general error message when form contains errors */-->
     <th:block th:if="${#fields.hasErrors('${processForm.*}')}">
@@ -42,7 +73,7 @@
         
         <div class="form-group">
             <div class="col-lg-offset-2 col-lg-10">
-                <button type="submit" class="btn btn-default">Procesar</button>
+                <button id="button-submit" type="submit" class="btn btn-default">Procesar</button>
             </div>
         </div>
     </fieldset>

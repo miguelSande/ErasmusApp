@@ -6,13 +6,24 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * The Class UniversityService.
+ */
 @Service
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class UniversityService {
 	
+	/** The university repo. */
 	@Autowired
 	private UniversityRepository universityRepo;
 	
+	/**
+	 * Creates the university.
+	 * If already exists, updates its info
+	 *
+	 * @param university the university
+	 * @return the university
+	 */
 	@Transactional
 	public University create(University university) {
 		if (!universityRepo.exists(university.getName())) {
