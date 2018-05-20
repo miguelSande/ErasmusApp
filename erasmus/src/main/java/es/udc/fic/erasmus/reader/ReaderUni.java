@@ -19,6 +19,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 
 import es.udc.fic.erasmus.Language;
+import es.udc.fic.erasmus.parser.Parser;
 import es.udc.fic.erasmus.preferences.PreferencesService;
 import es.udc.fic.erasmus.preferences.PreferencesString;
 import es.udc.fic.erasmus.university.University;
@@ -147,6 +148,7 @@ public class ReaderUni {
 	 * @return the university
 	 */
 	private University processRow(Iterator<Cell> cellIt) {
+		Parser parser = new Parser();
 		String name = null, country = null, year = null;
 		Long number = null, duration = null, posts = null;
 		Language language = null;
@@ -162,10 +164,7 @@ public class ReaderUni {
 				year = getCellValue(cell).toString();
 			if (column == languageC) {
 				String s = (String) getCellValue(cell);
-				s = s.toUpperCase();
-				s = s.replaceAll("\\s", "");
-				s = s.replace("-", "_");
-				language = Language.valueOf(s);
+				language = parser.parse(s);
 			}
 			if (column == numberC) {
 				aux = (Double) getCellValue(cell);

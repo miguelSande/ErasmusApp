@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import es.udc.fic.erasmus.State;
 import es.udc.fic.erasmus.error.UniversityNotFoundException;
+import es.udc.fic.erasmus.parser.Parser;
 import es.udc.fic.erasmus.preferences.PreferencesService;
 import es.udc.fic.erasmus.preferences.PreferencesString;
 import es.udc.fic.erasmus.request.Request;
@@ -74,19 +75,19 @@ public class ReaderStudent {
 	private int valC;
 	
 	/** The lang test 1 C. */
-	private int lang_test1C;
+	private int lang_testENC;
 	
 	/** The lang test 2 C. */
-	private int lang_test2C;
+	private int lang_testFRC;
 	
 	/** The lang test 3 C. */
-	private int lang_test3C;
+	private int lang_testGEC;
 	
 	/** The lang test 4 C. */
-	private int lang_test4C;
+	private int lang_testITC;
 	
 	/** The lang test 5 C. */
-	private int lang_test5C;
+	private int lang_testPTC;
 	
 	/** The uni C. */
 	private int uniC;
@@ -116,11 +117,11 @@ public class ReaderStudent {
 		othersC = preferencesS[3];
 		noteC = preferencesS[4];
 		valC = preferencesS[5];
-		lang_test1C = preferencesS[6];
-		lang_test2C = preferencesS[7];
-		lang_test3C = preferencesS[8];
-		lang_test4C = preferencesS[9];
-		lang_test5C = preferencesS[10];
+		lang_testENC = preferencesS[6];
+		lang_testFRC = preferencesS[7];
+		lang_testGEC = preferencesS[8];
+		lang_testITC = preferencesS[9];
+		lang_testPTC = preferencesS[10];
 		
 		uniC = preferencesR[0];
 		priorityC = preferencesR[1];
@@ -204,15 +205,15 @@ public class ReaderStudent {
 				if (value.equals(pre.getMotive()))
 					motiveC = cell.getColumnIndex();				
 				if (value.toUpperCase().contains("INGLES") || value.toUpperCase().contains("ENGLISH"))
-					lang_test1C = cell.getColumnIndex();
+					lang_testENC = cell.getColumnIndex();
 				if (value.toUpperCase().contains("FRANCÉS") || value.toUpperCase().contains("FRENCH"))
-					lang_test2C = cell.getColumnIndex();
+					lang_testFRC = cell.getColumnIndex();
 				if (value.toUpperCase().contains("ALEMÁN") || value.toUpperCase().contains("GERMAN"))
-					lang_test3C = cell.getColumnIndex();
+					lang_testGEC = cell.getColumnIndex();
 				if (value.toUpperCase().contains("ITALIANO") || value.toUpperCase().contains("ITALY"))
-					lang_test4C = cell.getColumnIndex();
+					lang_testITC = cell.getColumnIndex();
 				if (value.toUpperCase().contains("PORTUGUÉS") || value.toUpperCase().contains("PORTUGUESS"))
-					lang_test5C = cell.getColumnIndex();
+					lang_testPTC = cell.getColumnIndex();
 			}
 		}
 		
@@ -225,7 +226,7 @@ public class ReaderStudent {
 		private Student processStudentRow(Iterator<Cell> cellIt) {
 			String dni = null, name = null, others = null, language = null;
 			Long priority = null;
-			Double aux, note = null, lan1 = null,lan2=null,lan3=null,lan4=null,lan5=null;
+			Double aux, note = null, lanEn = null,lanFr=null,lanGe=null,lanIt=null,lanPt=null;
 			while (cellIt.hasNext()) {
 				Cell cell = cellIt.next();
 				int column = cell.getColumnIndex();
@@ -237,16 +238,16 @@ public class ReaderStudent {
 					others = (String) getCellValue(cell);
 				if (column == languageC)
 					language = (String) getCellValue(cell);
-				if (column == lang_test1C)
-					lan1 = (Double) getCellValue(cell);
-				if (column == lang_test2C)
-					lan2 = (Double) getCellValue(cell);
-				if (column == lang_test3C)
-					lan3 = (Double) getCellValue(cell);
-				if (column == lang_test4C)
-					lan4 = (Double) getCellValue(cell);
-				if (column == lang_test5C)
-					lan5 = (Double) getCellValue(cell);
+				if (column == lang_testENC)
+					lanEn = (Double) getCellValue(cell);
+				if (column == lang_testFRC)
+					lanFr = (Double) getCellValue(cell);
+				if (column == lang_testGEC)
+					lanGe = (Double) getCellValue(cell);
+				if (column == lang_testITC)
+					lanIt = (Double) getCellValue(cell);
+				if (column == lang_testPTC)
+					lanPt = (Double) getCellValue(cell);
 				if (column == noteC) {
 					note = (Double) getCellValue(cell);
 				}
@@ -257,10 +258,14 @@ public class ReaderStudent {
 					priority = aux.longValue();
 				}
 			}
-			if (priority != null && priority == 1)
-				return new Student(dni, name, note, others, language, (lan1 != null && lan1 >= 5),
-						(lan5 != null && lan5 >= 5), (lan3 != null && lan3 >= 5),
-						(lan4 != null && lan4 >= 5), (lan2 != null && lan2 >= 5));
+			if (priority != null && priority == 1) {
+				Parser parser = new Parser();
+				return new Student(dni, name, note, others, language, (parser.isTestEnglish(language) || (lanEn != null && lanEn >= 5)),
+						(parser.isTestPortuguess(language) || (lanPt != null && lanPt >= 5)),
+						(parser.isTestGerman(language) || (lanGe != null && lanGe >= 5)),
+						(parser.isTestItalian(language) || (lanIt != null && lanIt >= 5)),
+						(parser.isTestFrench(language) || (lanFr != null && lanFr >= 5)));
+			}
 			else
 				return null;
 		}

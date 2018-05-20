@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="#{view.index.title}">Welcome!</title>
+    <title>ErasmusApp Home</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link href="../../../resources/css/bootstrap.min.css" rel="stylesheet" media="screen" th:href="@{/resources/css/bootstrap.min.css}"/>
     <link href="../../../resources/css/core.css" rel="stylesheet" media="screen" th:href="@{/resources/css/core.css}" />
@@ -11,15 +11,32 @@
 <body>
 <div th:replace="fragments/layout :: header"></div>
 <div class="container">
-    <!-- /* Handle the flash message */-->
-    <th:block th:if="${message != null}">
-        <!-- /* The message code is returned from the @Controller */ -->
-        <div th:replace="fragments/components :: alert (type=${#strings.toLowerCase(message.type)}, message=#{${message.message}(${#authentication.name})})">&nbsp;</div>
-    </th:block>
-    <p class="lead text-center">
-        Welcome to the Spring MVC Quickstart application!
-    </p>
-    <div th:replace="fragments/layout :: footer"></div>
+    <div class="text-center">
+        <p class="lead">
+            Procesa los documentos necesarios para la asignación de las plazas erasmus.
+        </p>
+        <p>
+            <a class="btn btn-success btn-lg" id="process" th:href="@{/process}">Procesar documentos</a>
+        </p>
+    </div>
+    <div th:replace="fragments/layout :: footer">&copy; 2016 The Static Templates</div>
 </div>
+<!-- <script th:inline="javascript" type="text/javascript">
+    /* Fill in modal with content loaded with Ajax */
+    $(document).ready(function () {
+        $('#signup').on('click', function () {
+            $("#signup-modal").modal();
+            $("#signup-modal-body").text("");
+            $.ajax({
+                url: "signup",
+                cache: false
+            }).done(function (html) {
+                $("#signup-modal-body").append(html);
+            });
+        })
+    });
+</script> -->
+<!-- Signup modal -->
+<div th:replace="fragments/components :: modal(id='signup-modal', title='Signup')"></div>
 </body>
 </html>

@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.udc.fic.erasmus.Language;
 import es.udc.fic.erasmus.State;
+import es.udc.fic.erasmus.parser.Parser;
 import es.udc.fic.erasmus.student.Student;
 import es.udc.fic.erasmus.student.StudentService;
 import es.udc.fic.erasmus.university.University;
@@ -170,10 +171,11 @@ public class RequestService {
 	 * Check language. checks if a student meets the  requested language. 
 	 *
 	 * @param student the student
-	 * @param language the language
+	 * @param language the language required
 	 * @return true, if the student has a valid test or meets the requirements.
 	 */
 	public boolean checkLanguage(Student student, Language language) {
+		Parser parser = new Parser();
 		if (language == null)
 			return true;
 		if (student.getLanguage() != null) {
@@ -182,10 +184,7 @@ public class RequestService {
 			String[] lans = student.getLanguage().split(",");
 			List<Language> languages = new ArrayList<>();
 			for (String s: lans) {
-				s = s.toUpperCase();
-				s = s.replaceAll("\\s", "");
-				s = s.replace("-", "_");
-				languages.add(Language.valueOf(s));
+				languages.add(parser.parse(s));
 			}
 			for (Language l: languages) {
 				if (language.checking(l)) 
