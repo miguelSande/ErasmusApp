@@ -145,6 +145,10 @@ public class ProcessController {
 			MessageHelper.addErrorAttribute(ra, "process.fileError");
 			model.addAttribute(new ProcessForm());
 			return "redirect:/process";
+		} catch (Exception e) {
+			MessageHelper.addErrorAttribute(ra, "process.readError");
+			model.addAttribute(new ProcessForm());
+			return "redirect:/process";
 		} finally {}
 	}
 	

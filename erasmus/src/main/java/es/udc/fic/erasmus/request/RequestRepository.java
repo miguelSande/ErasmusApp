@@ -16,6 +16,8 @@ public interface RequestRepository extends JpaRepository<Request, Long>{
 	
 	List<Request> findByStudent(Student s);
 	
+	List<Request> findByStudentAndState(Student s, State state);
+	
 	List<Request> findByUniversity(University u);
 	
 	List<Request> findByState(State state);

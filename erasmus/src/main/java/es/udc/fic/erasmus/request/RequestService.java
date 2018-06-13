@@ -213,7 +213,7 @@ public class RequestService {
 	 */
 	@Transactional
 	public void process(Student student) {
-		List<Request> request = requestRepo.findByStudent(student);
+		List<Request> request = requestRepo.findByStudentAndState(student, State.PENDING);
 		boolean pending = true;
 		request.sort((r1,r2) -> r1.getPriority().compareTo(r2.getPriority()));
 		for (Request r: request) {
