@@ -100,7 +100,7 @@ public class ProcessController {
 	}
 	
 	/**
-	 * Process. process the documents and shows the result, redirects in case of errors.
+	 * Process. process the documents and shows the result, redirects in case of errors showing error message.
 	 *
 	 * @param model the model
 	 * @param processForm the process form
