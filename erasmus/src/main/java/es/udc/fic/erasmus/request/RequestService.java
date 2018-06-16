@@ -84,7 +84,6 @@ public class RequestService {
 		Collections.reverse(allReq);
 		for (Student st: allReq) {
 			process(st);
-			postprocess(st);
 		}
 	}
 	
@@ -141,8 +140,7 @@ public class RequestService {
 	 *
 	 * @param st the st
 	 */
-	private void postprocess(Student st) {
-		List<Request> rqs = requestRepo.findByStudent(st);
+	private void postprocess(List<Request> rqs) {
 		if (waiting(rqs)) {
 			if (accepted(rqs)) {
 				for (Request r: rqs) {
@@ -258,7 +256,8 @@ public class RequestService {
 				r.setMotive("Asignada opción preferente");
 				requestRepo.save(r);
 			}
-		}		
+		}	
+		postprocess(request);
 	}
-
+	
 }

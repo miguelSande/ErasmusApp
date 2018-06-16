@@ -441,7 +441,7 @@ public class ReaderStudent {
 		    Student student = studentService.find(cellName);
 		    Cell valCell = row.getCell(valC);
 		    if (valCell ==  null)
-		    	valCell = row.createCell(dniC);
+		    	valCell = row.createCell(valC);
 		    valCell.setCellType(CellType.NUMERIC);
 		    valCell.setCellValue(student.getVal());
 		    Double aux2 = (Double) getCellValue(row.getCell(priorityC));

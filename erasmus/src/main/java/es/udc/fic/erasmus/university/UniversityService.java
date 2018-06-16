@@ -36,6 +36,7 @@ public class UniversityService {
 			actual.setDuration(university.getDuration());
 			actual.setLanguage(university.getLanguage());
 			actual.setPosts(university.getPosts());
+			actual.setWaiting(0);
 			universityRepo.save(actual);
 			return actual;
 		}
