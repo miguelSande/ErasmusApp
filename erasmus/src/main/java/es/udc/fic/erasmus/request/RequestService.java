@@ -148,6 +148,9 @@ public class RequestService {
 						r.setState(State.REJECTED);
 						r.setMotive("Prazas agotadas");
 						requestRepo.save(r);
+						University un = r.getUniversity();
+						un.setWaiting(un.getWaiting()-1);
+						uniRepo.save(un);
 					}
 				}
 			}
@@ -159,6 +162,9 @@ public class RequestService {
 						r.setState(State.REJECTED);
 						r.setMotive("Asignada mellor opción");
 						requestRepo.save(r);
+						University un = r.getUniversity();
+						un.setWaiting(un.getWaiting()-1);
+						uniRepo.save(un);
 					}
 				}
 			}

@@ -105,7 +105,7 @@ public class StudentService {
 			val = val + 0.25;
 		List<Request> rqs = rqService.findByStudent(student);
 		for (Request r: rqs) {
-			if (r.getUniversity().getLanguage() == null && student.getLanguage() != null && student.getLanguage().toUpperCase().contains("PROBA")) {
+			if (r.getUniversity().getLanguage() == null && student.getLanguage() != null && !student.getLanguage().toUpperCase().contains("PROBA")) {
 				val = val + 0.25;
 				break;
 			}
