@@ -52,7 +52,7 @@ $(document).ready(function(){
         <div class="form-group" th:classappend="${#fields.hasErrors('pathUni')}? 'has-error'">
             <label for="pathUni" class="control-label">Documento de destinos</label>
             <div class="col-lg-10" style="margin-top: 10px">
-                <input type="file" accept=".xls,.xlsx,.XLS" required="required" id="pathUni" placeholder="Destinos" th:field="*{pathUni}" />
+                <input type="file" accept=".xls,.xlsx,.XLS" id="pathUni" placeholder="Destinos" th:field="*{pathUni}" />
                 <span class="help-block" th:if="${#fields.hasErrors('pathUni')}" th:errors="*{pathUni}">Fichero incorrecto</span>
             </div>
             <div class="col-lg-10" style="margin-top: 10px">
@@ -63,7 +63,7 @@ $(document).ready(function(){
         <div class="form-group" th:classappend="${#fields.hasErrors('pathRequest')}? 'has-error'">
             <label for="pathRequest" class="control-label">Documento de solicitudes</label>
             <div class="col-lg-10" style="margin-top: 10px">
-                <input type="file" accept=".xls,.xlsx,.XLS" required="required" id="pathRequest" placeholder="Solicitudes" th:field="*{pathRequest}"/>
+                <input type="file" accept=".xls,.xlsx,.XLS" id="pathRequest" placeholder="Solicitudes" th:field="*{pathRequest}"/>
                 <span class="help-block" th:if="${#fields.hasErrors('pathRequest')}" th:errors="*{pathRequest}">Fichero incorrecto</span>
             </div>
             <div class="col-lg-10" style="margin-top: 10px">
