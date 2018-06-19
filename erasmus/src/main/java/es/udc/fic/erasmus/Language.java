@@ -114,6 +114,7 @@ public enum Language {
 			return false;
 		lan = lan.replaceAll("\\s", "");
 		lan = lan.toUpperCase().replaceAll("-", "_");
+		lan = lan.toUpperCase().replaceAll("–", "_");
 		for (String s: lan.split(",")) {
 			Language language = Language.valueOf(s);
 			lan1=mCode%10; lan2=language.mCode%10;
