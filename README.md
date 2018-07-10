@@ -4,6 +4,8 @@ ErasmusApp es un sistema web para el procesado de solicitudes erasmus.
 
 ## Ejecutar la aplicación
 
+Para arrancar la aplicación es necesario tener instalado maven. Más información en: https://maven.apache.org/install.html
+
 Una vez descargada la aplicición se puede lanzar con el comando en el directorio / de la aplicación:
 
 `mvn test tomcat7:run`
